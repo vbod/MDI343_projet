@@ -4,6 +4,7 @@ import numpy as np
 import utils
 import matplotlib.pyplot as plt
 import random as rd
+import MLP
 
 from sklearn import linear_model, metrics, grid_search
 from sklearn.cross_validation import train_test_split
@@ -29,7 +30,7 @@ logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regre
 ###############################################################################
 # Training du premier rbm
 rbm_layer_1.learning_rate = 0.04
-rbm_layer_1.n_iter = 25
+rbm_layer_1.n_iter = 2
 rbm_layer_1.n_components = 100
 # Training RBM
 rbm_layer_1.fit(X_train)
@@ -47,7 +48,27 @@ while (comp < n_sample_second_layer_training):
 
 # Training du second rbm
 rbm_layer_2.learning_rate = 0.06
-rbm_layer_2.n_iter = 20
+rbm_layer_2.n_iter = 2
 rbm_layer_2.n_components = 100
 # Training RBM
 rbm_layer_2.fit(H1_train)
+
+rbm1w = rbm_layer_1.components_.T
+bias1h = rbm_layer_1.intercept_hidden_
+bias1h = bias1h.reshape(bias1h.size, 1)
+bias1v = rbm_layer_1.intercept_visible_
+bias1v = bias1v.reshape(bias1v.size, 1)
+
+rbm2w = rbm_layer_2.components_.T
+bias2h = rbm_layer_2.intercept_hidden_
+bias2h = bias2h.reshape(bias2h.size, 1)
+bias2v = rbm_layer_2.intercept_visible_
+bias2v = bias2v.reshape(bias2v.size, 1)
+
+W1 = np.vstack((np.hstack((rbm1w, bias1v)), np.hstack((bias1h.T, np.zeros(shape=(1, 1))))))
+W2 = np.vstack((np.hstack((rbm2w, bias2v)), np.hstack((bias2h.T, np.zeros(shape=(1, 1))))))
+
+print(W1)
+print(W1.shape)
+print(W2)
+print(W2.shape)
