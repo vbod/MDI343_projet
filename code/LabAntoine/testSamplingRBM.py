@@ -68,6 +68,11 @@ bias2v = bias2v.reshape(bias2v.size, 1)
 W1 = np.vstack((np.hstack((rbm1w, bias1v)), np.hstack((bias1h.T, np.zeros(shape=(1, 1))))))
 W2 = np.vstack((np.hstack((rbm2w, bias2v)), np.hstack((bias2h.T, np.zeros(shape=(1, 1))))))
 
+weights = [W1, W2]
+layers = [64+1, rbm_layer_1.n_components+1, rbm_layer_2.n_components+1]
+
+print(type(weights))
+
 print(W1)
 print(W1.shape)
 print(W2)
