@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import random as rd
 import MLP
 
-from sklearn import linear_model, metrics, grid_search
+from sklearn import linear_model, metrics, grid_search, preprocessing
 from sklearn.cross_validation import train_test_split
 from sklearn.neural_network import BernoulliRBM
 from sklearn.pipeline import Pipeline
@@ -29,9 +29,9 @@ rbm_layer_2 = BernoulliRBM(random_state=0, verbose=True)
 logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
 ###############################################################################
 # Training du premier rbm
-rbm_layer_1.learning_rate = 0.04
-rbm_layer_1.n_iter = 2
-rbm_layer_1.n_components = 100
+rbm_layer_1.learning_rate = 0.01
+rbm_layer_1.n_iter = 25
+rbm_layer_1.n_components = 1000
 # Training RBM
 rbm_layer_1.fit(X_train)
 
@@ -46,9 +46,9 @@ while (comp < n_sample_second_layer_training):
 	H1_train[comp] = rbm_layer_1._sample_hiddens(X[randTemp], rng)
 	comp = comp + 1
 
-# Training du second rbm
-rbm_layer_2.learning_rate = 0.06
-rbm_layer_2.n_iter = 2
+# Training du second rb
+rbm_layer_2.learning_rate = 0.01
+rbm_layer_2.n_iter = 20
 rbm_layer_2.n_components = 100
 # Training RBM
 rbm_layer_2.fit(H1_train)
@@ -71,9 +71,47 @@ W2 = np.vstack((np.hstack((rbm2w, bias2v)), np.hstack((bias2h.T, np.zeros(shape=
 weights = [W1, W2]
 layers = [64+1, rbm_layer_1.n_components+1, rbm_layer_2.n_components+1]
 
-print(type(weights))
+mlp = MLP.MLP(layers, weights=weights)
+mlp.fit(X_train, Y_train, epochs=1000)
 
-print(W1)
-print(W1.shape)
-print(W2)
-print(W2.shape)
+print("Calcul nouvelles representations")
+X_train_new = np.zeros((X_train.shape[0], sum(layers)))
+for i in range(int(X_train.shape[0])):
+	a = np.hstack((X_train[i].reshape((1, X_train.shape[1])), np.ones((1, 1))))
+	resTemp = a
+	for j in range(0, len(mlp.weights)):
+		resTemp = mlp.activation(np.dot(resTemp, mlp.weights[j]))
+		a = np.hstack((a, resTemp))
+	X_train_new[i] = a
+
+X_test_new = np.zeros((X_test.shape[0], sum(layers)))
+for i in range(int(X_test.shape[0])):
+	a = np.hstack((X_test[i].reshape((1, X_test.shape[1])), np.ones((1, 1))))
+	resTemp = a
+	for j in range(0, len(mlp.weights)):
+		resTemp = mlp.activation(np.dot(resTemp, mlp.weights[j]))
+		a = np.hstack((a, resTemp))
+	X_test_new[i] = a
+
+print("Calcul regression logistique")
+logistic = linear_model.LogisticRegression()
+logistic.C = 6000.0
+X_train_new = preprocessing.scale(X_train_new)
+X_test_new = preprocessing.scale(X_test_new)
+
+logistic.fit(X_train_new, Y_train)
+
+# print("Score")
+# score = logistic.score(X_test_new, Y_test)
+
+print("Logistic regression using DBM features:\n%s\n" % (
+    metrics.classification_report(
+        Y_test,
+        logistic.predict(X_test_new))))
+
+# 	print("resTemlogistic.C = 6000.0p")
+# 	print(resTemp)
+# 	print([item for sublist in resTemp for item in sublist])
+# 	res[i, :] = np.aray([item for sublist in resTemp for item in sublist])
+
+# print(res.shape)

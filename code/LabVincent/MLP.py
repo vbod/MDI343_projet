@@ -58,7 +58,7 @@ class MLP:
             self.weights = weights
     
     
-    def fit(self, X, y, epochs = 1000, learning_rate = .2):
+    def fit(self, X, y, epochs = 1000, learning_rate = .1):
         """
         Calcule les poids en fonction des données fournies (supervisé). La 
         méthode utilisée est une descente de gradient stochastique - choix 
