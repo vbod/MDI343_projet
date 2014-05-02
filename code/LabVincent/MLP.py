@@ -34,8 +34,10 @@ class MLP:
             self.activation = logistic
             self.activation_deriv = logistic_derivative
         elif activation == 'tanh':
-            self.activation = lambda x: np.tanh(x)
+            self.activation = tanh
             self.activation_deriv = tanh_derivative
+        
+        self.layers = layers
         
         if weights == None:
             self.weights = []
@@ -99,26 +101,36 @@ class MLP:
                 delta = np.atleast_2d(deltas[i])
                 self.weights[i] += learning_rate*layer.T.dot(delta)
     
+    
     def predict(self, X):
         """
-        Effectue de la prédiction sur le MLP appris par la méthode fit.
+        Effectue de la prédiction sur le MLP appris par la méthode fit et un 
+        ensemble de test dans X. 
         
         Input :
             - X : matrice de test, np.array (n_test, n_features)
             
         Ouput :
-            - a : vecteur contenant les labels prédits, np.array (n_test,)
+            - res : matrice contenant les résultats, np.array 
+              (n_test, n_layer_end) où n_layer end est le nombre à la dernière
+              couche
         """
         X = np.hstack((X, np.ones((int(X.shape[0]),1))))
-        a = X
-        for i,ligne in enumerate(X):
+        res = np.zeros((int(X.shape[0]), int(self.layers[-1])))
+        for i in range(int(X.shape[0])):
+            a = X[i]
             for j in range(0, len(self.weights)):
-                a[i] = self.activation(np.dot(a[i], self.weights[j]))
-        return a[:,0]
+                a = self.activation(np.dot(a, self.weights[j]))
+            res[i] = a
+        return res
+
+    
+    def score(self, X, y):
+        pass
 
 
 if __name__ == '__main__':    
-    mlp = MLP([2,2,1])
+    mlp = MLP([2,3,2])
     X = np.array([[0, 0],
                   [0, 1],
                   [1, 0],
@@ -128,3 +140,6 @@ if __name__ == '__main__':
     X_test = np.array([[0, 0], [0, 1], [1, 0], [1,1]])
     a = mlp.predict(X_test)
     print a
+    
+    for i in [[0, 0], [0, 1], [1, 0], [1,1]]:
+        print(i,mlp.predict_(i))
