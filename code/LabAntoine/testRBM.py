@@ -1,67 +1,29 @@
 from __future__ import print_function
 
-print(__doc__)
-
-# Authors: Yann N. Dauphin, Vlad Niculae, Gabriel Synnaeve
-# License: BSD
-
 import numpy as np
+import utils
 import matplotlib.pyplot as plt
 
-from scipy.ndimage import convolve
-from sklearn import linear_model, datasets, metrics
+from sklearn import linear_model, metrics, grid_search
 from sklearn.cross_validation import train_test_split
 from sklearn.neural_network import BernoulliRBM
 from sklearn.pipeline import Pipeline
-
+from pprint import pprint
+from sklearn.utils import check_random_state
 
 ###############################################################################
-# Setting up
+# Settings
 
-def nudge_dataset(X, Y):
-    """
-    This produces a dataset 5 times bigger than the original one,
-    by moving the 8x8 images in X around by 1px to left, right, down, up
-    """
-    direction_vectors = [
-        [[0, 1, 0],
-         [0, 0, 0],
-         [0, 0, 0]],
-GridSearchCV
-        [[0, 0, 0],
-         [1, 0, 0],
-         [0, 0, 0]],
-
-        [[0, 0, 0],
-         [0, 0, 1],
-         [0, 0, 0]],
-
-        [[0, 0, 0],
-         [0, 0, 0],
-         [0, 1, 0]]]
-
-    shift = lambda x, w: convolve(x.reshape((8, 8)), mode='constant',
-                                  weights=w).ravel()
-    X = np.concatenate([X] +
-                       [np.apply_along_axis(shift, 1, X, vector)
-                        for vector in direction_vectors])
-    Y = np.concatenate([Y for _ in range(5)], axis=0)
-    return X, Y
-
-# Load Data
-digits = datasets.load_digits()
-X = np.asarray(digits.data, 'float32')
-X, Y = nudge_dataset(X, digits.target)
-X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001)  # 0-1 scaling
-
+# Chargement des digits
+X, Y = utils.load_data()
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
                                                     test_size=0.2,
                                                     random_state=0)
 
 # Models we will use
-logistic = linear_model.LogisticRegression()
-rbm1 = BernoulliRBM(random_state=0, verbose=True)
-classifier = Pipeline(steps=[('rbm1', rbm1), ('logistic', logistic)])
+logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
+rbm = BernoulliRBM(random_state=0, verbose=True)
+classifier = Pipeline(steps=[('rbm', rbm), ('logistic', logistic)])
 
 ###############################################################################
 # Training
@@ -69,52 +31,57 @@ classifier = Pipeline(steps=[('rbm1', rbm1), ('logistic', logistic)])
 # Hyper-parameters. These were set by cross-validation,
 # using a GridSearchCV. Here we are not performing cross-validation to
 # save time.
-rbm1.learning_rate = 0.06
-rbm1.n_iter = 20
+# best 0.04 25
+parameters = {'rbm__learning_rate': np.linspace(0.04, 0.05, num=10)}
+# rbm.learning_rate = 0.041
+rbm.n_iter = 20
 # More components tend to give better prediction performance, but larger
 # fitting time
-rbm1.n_components = 100
-
-# rbm2.learning_rate = 0.06
-# rbm2.n_iter = 20
-# # More components tend to give better prediction performance, but larger
-# # fitting time
-# rbm2.n_components = 100
-
+rbm.n_components = 100
+# penalite pour la regression logistic
 logistic.C = 6000.0
 
+gridSearch = grid_search.GridSearchCV(classifier, parameters)
 # Training RBM-Logistic Pipeline
-classifier.fit(X_train, Y_train)
+print("Performing grid search...")
+print("pipeline:", [name for name, _ in classifier.steps])
+print("parameters:")
+pprint(parameters)
+print(gridSearch.fit(X_train, Y_train))
+print("Best score: %0.3f" % gridSearch.best_score_)
+print("Best parameters set:")
+best_parameters = gridSearch.best_estimator_.get_params()
+for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+# # Training Logistic regression
+# logistic_classifier = linear_model.LogisticRegression(C=100.0)
+# logistic_classifier.fit(X_train, Y_train)
 
-# Training Logistic regression
-logistic_classifier = linear_model.LogisticRegression(C=100.0)
-logistic_classifier.fit(X_train, Y_train)
+# ###############################################################################
+# # Evaluation
 
-###############################################################################
-# Evaluation
+# print()
+# print("Logistic regression using RBM features:\n%s\n" % (
+#     metrics.classification_report(
+#         Y_test,
+#         classifier.predict(X_test))))
 
-print()
-print("Logistic regression using RBM features:\n%s\n" % (
-    metrics.classification_report(
-        Y_test,
-        classifier.predict(X_test))))
+# print("Logistic regression using raw pixel features:\n%s\n" % (
+#     metrics.classification_report(
+#         Y_test,
+#         logistic_classifier.predict(X_test))))
 
-print("Logistic regression using raw pixel features:\n%s\n" % (
-    metrics.classification_report(
-        Y_test,
-        logistic_classifier.predict(X_test))))
+# ###############################################################################
+# # Plotting
 
-###############################################################################
-# Plotting
+# plt.figure(figsize=(4.2, 4))
+# for i, comp in enumerate(rbm.components_):
+#     plt.subplot(10, 10, i + 1)
+#     plt.imshow(comp.reshape((8, 8)), cmap=plt.cm.gray_r,
+#                interpolation='nearest')
+#     plt.xticks(())
+#     plt.yticks(())
+# plt.suptitle('100 components extracted by RBM1', fontsize=16)
+# plt.subplots_adjust(0.08, 0.02, 0.92, 0.85, 0.08, 0.23)
 
-plt.figure(figsize=(4.2, 4))
-for i, comp in enumerate(rbm1.components_):
-    plt.subplot(10, 10, i + 1)
-    plt.imshow(comp.reshape((8, 8)), cmap=plt.cm.gray_r,
-               interpolation='nearest')
-    plt.xticks(())
-    plt.yticks(())
-plt.suptitle('100 components extracted by RBM1', fontsize=16)
-plt.subplots_adjust(0.08, 0.02, 0.92, 0.85, 0.08, 0.23)
-
-plt.show()
+# plt.show()
