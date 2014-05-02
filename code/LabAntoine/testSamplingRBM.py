@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 import random as rd
 import MLP
 
+from sklearn.datasets import fetch_mldata
+from sklearn import svm
 from sklearn import linear_model, metrics, grid_search, preprocessing
 from sklearn.cross_validation import train_test_split
 from sklearn.neural_network import BernoulliRBM
@@ -17,8 +19,14 @@ from sklearn.utils import check_random_state
 # Settings
 n_sample_second_layer_training = 10
 
+mnist = fetch_mldata('MNIST original', data_home='../data')
+# # digits = datasets.load_digits()
+X = mnist.data
+Y = mnist.target
+X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001)
 # Chargement des digits
-X, Y = utils.load_data()
+# X, Y = utils.load_data()
+print(X.shape)
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
                                                     test_size=0.2,
                                                     random_state=0)
@@ -33,11 +41,13 @@ rbm_layer_1.learning_rate = 0.01
 rbm_layer_1.n_iter = 25
 rbm_layer_1.n_components = 1000
 # Training RBM
+print("Debut training RBM1")
+print(X_train.shape)
 rbm_layer_1.fit(X_train)
 
 # creation d'une base de train a partir d'echantillonnage
 # de variable cachees du premier rbm
-n_sample_second_layer_training = 2*int(X.shape[0])
+n_sample_second_layer_training = int(X.shape[0])
 H1_train = np.zeros(shape=(n_sample_second_layer_training, rbm_layer_1.n_components))
 comp = 0
 while (comp < n_sample_second_layer_training):
@@ -49,8 +59,10 @@ while (comp < n_sample_second_layer_training):
 # Training du second rb
 rbm_layer_2.learning_rate = 0.01
 rbm_layer_2.n_iter = 20
-rbm_layer_2.n_components = 100
+rbm_layer_2.n_components = 1000
 # Training RBM
+print("Debut training RBM1")
+print(H1_train.shape)
 rbm_layer_2.fit(H1_train)
 
 rbm1w = rbm_layer_1.components_.T
@@ -93,9 +105,17 @@ for i in range(int(X_test.shape[0])):
 		a = np.hstack((a, resTemp))
 	X_test_new[i] = a
 
+clf = svm.SVC()
+clf.fit(X_train_new, Y_train_new)  
+
+print("SVM using DBN features:\n%s\n" % (
+    metrics.classification_report(
+        Y_test_new,
+        clf.predict(X_test_new))))
+
 print("Calcul regression logistique")
 logistic = linear_model.LogisticRegression()
-logistic.C = 6000.0
+logistic.C = 10
 X_train_new = preprocessing.scale(X_train_new)
 X_test_new = preprocessing.scale(X_test_new)
 
@@ -104,9 +124,9 @@ logistic.fit(X_train_new, Y_train)
 # print("Score")
 # score = logistic.score(X_test_new, Y_test)
 
-print("Logistic regression using DBM features:\n%s\n" % (
+print("Logistic regression using DBN features:\n%s\n" % (
     metrics.classification_report(
-        Y_test,
+        Y_test_New,
         logistic.predict(X_test_new))))
 
 # 	print("resTemlogistic.C = 6000.0p")
