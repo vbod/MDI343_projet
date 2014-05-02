@@ -124,10 +124,6 @@ class MLP:
             res[i] = a
         return res
 
-    
-    def score(self, X, y):
-        pass
-
 
 if __name__ == '__main__':    
     mlp = MLP([2,3,2])
@@ -138,8 +134,6 @@ if __name__ == '__main__':
     y = np.array([0, 1, 1, 0])
     mlp.fit(X, y)
     X_test = np.array([[0, 0], [0, 1], [1, 0], [1,1]])
-    a = mlp.predict(X_test)
-    print a
+    res = mlp.predict(X_test)
+    print res
     
-    for i in [[0, 0], [0, 1], [1, 0], [1,1]]:
-        print(i,mlp.predict_(i))
