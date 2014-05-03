@@ -1,0 +1,66 @@
+MNIST :
+	Train : 56000
+	Test : 24000
+	Size : 784
+
+RBM1 :
+	n_v = 784
+	n_h = 1000
+	learning_rate = 0.01
+	n_iteration = 25
+	duree/iteration = 170s
+	duree = 4330
+
+RBM2 :
+	n_v = 1000
+	n_h = 1000
+	learning_rate = 0.01
+	n_iteration = 25
+	duree/iteration = 285s
+	duree = 7183
+
+MLP :
+	layers = 785, 1001, 1001
+	duree = 12.1s
+
+Sampling :
+	Train :
+		duree = 105s
+	Test :
+		duree = 24s
+
+SVM :
+	duree = 2036s
+	SVM using DBN features:
+             precision    recall  f1-score   support
+
+        0.0       0.97      0.99      0.98      1312
+        1.0       0.98      0.98      0.98      1604
+        2.0       0.95      0.97      0.96      1348
+        3.0       0.95      0.95      0.95      1427
+        4.0       0.96      0.97      0.96      1362
+        5.0       0.97      0.95      0.96      1280
+        6.0       0.97      0.98      0.98      1397
+        7.0       0.97      0.96      0.96      1461
+        8.0       0.95      0.95      0.95      1390
+        9.0       0.95      0.93      0.94      1419
+
+avg / total       0.96      0.96      0.96     14000
+
+Regression logistic :
+	duree : 4212s
+	Logistic regression using DBN features:
+             precision    recall  f1-score   support
+
+        0.0       0.97      0.98      0.98      1312
+        1.0       0.99      0.98      0.98      1604
+        2.0       0.95      0.96      0.95      1348
+        3.0       0.94      0.95      0.95      1427
+        4.0       0.97      0.97      0.97      1362
+        5.0       0.96      0.93      0.94      1280
+        6.0       0.97      0.98      0.97      1397
+        7.0       0.96      0.95      0.96      1461
+        8.0       0.94      0.96      0.95      1390
+        9.0       0.94      0.94      0.94      1419
+
+avg / total       0.96      0.96      0.96     14000

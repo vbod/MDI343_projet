@@ -16,13 +16,13 @@ def load_data():
         - Y labels
     """
     print("hopla")
-    mnist = fetch_mldata('MNIST original', data_home='../data')
-    print(mnist.data.shape)
-    # digits = datasets.load_digits()
-    X = mnist.data
-    Y = mnist.Y
-    # X = np.asarray(digits.data, 'float32')
-    # X, Y = nudge_dataset(X, digits.target)
+    # mnist = fetch_mldata('MNIST original', data_home='../data')
+    # print(mnist.data.shape)
+    digits = datasets.load_digits()
+    # X = mnist.data
+    # Y = mnist.Y
+    X = np.asarray(digits.data, 'float32')
+    X, Y = nudge_dataset(X, digits.target)
     X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001)
     return X, Y
 
