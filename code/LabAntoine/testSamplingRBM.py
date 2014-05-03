@@ -5,6 +5,7 @@ import utils
 import matplotlib.pyplot as plt
 import random as rd
 import MLP
+import shelve
 import time
 
 from sklearn.datasets import fetch_mldata
@@ -38,9 +39,9 @@ rbm_layer_2 = BernoulliRBM(random_state=0, verbose=True)
 logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
 ###############################################################################
 # Training du premier rbm
-rbm_layer_1.learning_rate = 0.01
-rbm_layer_1.n_iter = 50
-rbm_layer_1.n_components = 300
+rbm_layer_1.learning_rate = 0.04
+rbm_layer_1.n_iter = 25
+rbm_layer_1.n_components = 100
 # Training RBM
 print("Debut training RBM1")
 print(X_train.shape)
@@ -60,8 +61,8 @@ while (comp < n_sample_second_layer_training):
 
 # Training du second rb
 rbm_layer_2.learning_rate = 0.01
-rbm_layer_2.n_iter = 50
-rbm_layer_2.n_components = 300
+rbm_layer_2.n_iter = 25
+rbm_layer_2.n_components = 100
 # Training RBM
 print("Debut training RBM1")
 print(H1_train.shape)
@@ -134,7 +135,7 @@ print("SVM using DBN features:\n%s\n" % (
 print("Calcul regression logistique")
 t0 = time.clock()
 logistic = linear_model.LogisticRegression()
-logistic.C = 10
+logistic.C = 60
 X_train_new = preprocessing.scale(X_train_new)
 X_test_new = preprocessing.scale(X_test_new)
 
@@ -148,6 +149,10 @@ print("Logistic regression using DBN features:\n%s\n" % (
         Y_test,
         logistic.predict(X_test_new))))
 
+variablesTemp = shelve.open('sauvegardeVariablesTemp')
+variablesTemp['RBM1'] = rbm_layer_1
+variablesTemp['RBM2'] = rbm_layer_2
+# variablesTemp['MLP'] = mlp.weights
 # 	print("resTemlogistic.C = 6000.0p")
 # 	print(resTemp)
 # 	print([item for sublist in resTemp for item in sublist])
