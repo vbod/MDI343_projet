@@ -125,6 +125,18 @@ class MLP:
         return res
 
 
+    def grid_search(self, X, y, range_lr = np.array([])):
+        """
+        Effectue une recherche sur le learning rate pour resortir le paramètre
+        optimal. 
+        
+        Input : 
+            - range_lr : vecteur de learning_rate à tester
+        """
+        pass
+
+
+
 if __name__ == '__main__':    
     mlp = MLP([2,3,2])
     X = np.array([[0, 0],

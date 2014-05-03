@@ -9,7 +9,7 @@ from sklearn.datasets import fetch_mldata
 
 def load_data():
     """
-    Charge les digits avec convolution et normalisation 0-1.
+    Charge les digits avec convolution et normalisation 0-1
 
     Output :
         - X digits
@@ -28,7 +28,7 @@ def load_data():
 
 def nudge_dataset(X, Y):
     """
-    Multiplie la taille de X par 5 en translatant les images.
+    Multiplie la taille de X par 5 en translatant les images
 
     Input :
         - X digits

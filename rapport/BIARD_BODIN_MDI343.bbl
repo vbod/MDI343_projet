@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+
+\bibitem{DBLP:journals/corr/abs-1206-5538}
+Yoshua Bengio, Aaron~C. Courville, and Pascal Vincent.
+\newblock Unsupervised feature learning and deep learning: A review and new
+  perspectives.
+\newblock {\em CoRR}, abs/1206.5538, 2012.
+
+\bibitem{GlorotAISTATS2010}
+Yoshua Bengio and Xavier Glorot.
+\newblock Understanding the difficulty of training deep feedforward neural
+  networks.
+\newblock 9:249--256, May 2010.
+
+\end{thebibliography}

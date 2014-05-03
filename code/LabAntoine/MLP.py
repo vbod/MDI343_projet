@@ -115,6 +115,18 @@ class MLP:
             for j in range(0, len(self.weights)):
                 a[i] = self.activation(np.dot(a[i], self.weights[j]))
         return a[:,0]
+        
+    
+    def grid_search(self, range_lr = np.array([])):
+        """
+        Effectue une recherche sur le learning rate pour resortir le paramètre
+        optimal. 
+        
+        Input : 
+            - range_lr : vecteur de learning_rate à tester
+        """
+        pass
+        
 
 
 if __name__ == '__main__':    
