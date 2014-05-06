@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import numpy as np
 
+
 tanh = lambda x: np.tanh(x)
 tanh_derivative = lambda x: 1.-x**2
 logistic = lambda x: 1/(1 + np.exp(-x))
 logistic_derivative = lambda x: logistic(x)*(1-logistic(x))
-    
+
+
 class MLP:
     def __init__(self, layers, weights = None, activation = 'tanh'):
         """
