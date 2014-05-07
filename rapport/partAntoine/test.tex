@@ -1,0 +1,34 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[francais]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{algorithm}
+
+\author{Vincent Bodin et Antoine Biard}
+
+\begin{document}
+
+\subsection{Implémentation}
+
+\subsubsection{RBM}
+La difficulté de l'apprentissage du RBM réside dans le calcul du gradient. En effet, l'expression du gradient est :
+\[\]
+La première partie est appelée phase positive et sont calcul nécessite... La seconde partie est la phase négative et nécessite de calculer une espérance selon une distribution qui dépend des variables cachées. Cette esprérance est incalculable. la technique uselle pour calculer cette espérance est la \emph{contrastive divergence}.
+% sampling via 1D à décrire
+% décrire l'algorithme
+% caractéristiques de celui utilisé
+
+\subsubsection{MLP}
+
+\subsubsection{DBN}
+% description de l'algorithme complet
+% non orientation de la dernière couche
+% Potentiellement meilleur que DBM (idée que les couches cachées sont dépendentes des couches précédentes, mais les algos sont nuls)
+
+
+\subsection{Résultats}
+
+\end{document}
