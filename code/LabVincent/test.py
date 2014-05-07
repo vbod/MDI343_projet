@@ -200,9 +200,7 @@ clf.fit(X_train_new, Y_train)
 print(time.clock() - t0)
 
 print("SVM using DBN features:\n%s\n" % (
-    metrics.classification_report(
-        Y_test,
-        clf.predict(X_test_new))))
+    metrics.classification_report(Y_test, clf.predict(X_test_new))))
 
 print("Calcul regression logistique")
 t0 = time.clock()
@@ -217,9 +215,7 @@ print(time.clock() - t0)
 # score = logistic.score(X_test_new, Y_test)
 
 print("Logistic regression using DBN features:\n%s\n" % (
-    metrics.classification_report(
-        Y_test,
-        logistic.predict(X_test_new))))
+    metrics.classification_report(Y_test, logistic.predict(X_test_new))))
 
 variablesTemp = shelve.open('sauvegardeVariablesTemp')
 variablesTemp['RBM1'] = rbm_layer_1

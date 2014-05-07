@@ -222,9 +222,60 @@ g_{\theta}(h) & = & s_g(d + W'h)
 où typiquement $s_f$ et $s_g$ sont des sigmoïdes ou des tangentes hyperboliques. 
 
 
+\section{Implémentation et résultats}
 
 
+Dans cette partie nous allons présenter les différents choix que nous avons pris afin d'implémenter un DBN. Puis nous présenterons l'implémentation complète du graphe, et enfin nous comenterons les résultats obtenus.
 
+
+\subsection{Les différentes briques}
+
+
+Dans la littérature il existe un grand nombre d'algorithmes afin d'obtimiser un DBN. Nous allons ici présenter rapidement les briques qui composent classiquement les algorithmes d'apprentissage de DBN.
+
+
+\subsubsection{Les données}
+
+
+Afin de tester notre algorithme, nous avons décidé d'utiliser la base de données MNIST. Cette base de données a l'avantage d'être une référence et nous avons ainsi un très bon \textit{a priori} des performances de notre implémentation. Elle permet aussi de réaliser un apprentissage multiclasse. De plus, cette base a été le témoin de la puissance de l'apprentissage profond (réseau de neurones à convolution). La structure des chiffres permet en effet d'envisager une représentation à avec plusieurs niveau d'abstraction. Par exemple, la différence entre un 1 et un 7 ou un 6 et un 4 peut sembler ambiguë, et un classifieur prenant en entrée les vecteurs des pixels risque de ne pas être très pertinent.
+
+
+Le temps de calcul nécessaire à ces algorithmes est très important. Nous avons donc choisi de réaliser la plupart de nos tests sur une base réduite extraite de la base MNIST que nous avons chargé grâce à la fonciont \texttt{sklearn.datasets.load\_digits} de scikit-learn. Cette base contient 1797 images de chiffres de dimension $8 \times 8$. Afin d'augmenter la taille de la base, nous avons utilisé une technique classique qui consiste à réaliser des translations de chaque chiffre afin d'augmenter la base par un facteur $5$.
+
+
+Nous avons aussi essayé de lancer notre algorithme sur la véritable data base dont les images sont de taille $28 \times 28$ et est constituée de plus de 50000 exemples. Nous présenterons les résultats obtenus sur cette base. 
+
+
+\subsubsection{Le RBM}
+
+
+La structure essentielle de notre rapport est le RBM. La principale difficulté de cette structure est le calcul du gradient qui peut se calculer analytiquement. Nous rappelons que le principe des RBMs est de minimiser la log-vraissemblance qui s'exprime de cette manière :
+\begin{equation}
+	\log \left( P(x; \theta) \right) = \log \sum_h \mathrm{e}^{-E(x, h; \theta)} - \log \sum_{x, h} \mathrm{e}^{-E(x, h; \theta)}
+\end{equation}
+
+
+Cette expression se dérive par rapport à $\theta$ :
+\begin{equation}
+	\begin{array}{rll}
+		 \displaystyle\frac{\partial \log \left ( P(x; \theta) \right )}{\partial \theta} & = & \displaystyle\frac{\log \sum_h \mathrm{e}^{-E(x, h; \theta)}}{\partial \theta} - \frac{\partial \log \sum_{x, h} \mathrm{e}^{-E(x, h; \theta)}}{\partial \theta} \\
+		 &=&  \displaystyle-\frac{1}{\sum_h \mathrm{e}^{-E(x, h; \theta)}} \sum_h \mathrm{e}^{-E(x, h; \theta)} \frac{\partial E(x, h; \theta)}{\partial\theta} \\
+		 & &  \displaystyle+ \frac{1}{\sum_{x, h} \mathrm{e}^{-E(x, h; \theta)}} \sum_{x, h} \mathrm{e}^{-E(x, h; \theta)} \frac{\partial E(x, h; \theta)}{\partial\theta} \\
+		 &=&  \displaystyle- \sum_{h} P(h|x) \frac{\partial E(x, h; \theta)}{\theta} + - \sum_{x, h} P(x, h) \frac{\partial E(x, h; \theta)}{\partial\theta} 
+	\end{array}
+\end{equation}
+
+
+La première partie du gradient est appelée phase positive, la seconde est la phase négative. Afin de calculer la première partie il faut échantillonner selon la loi $P(h|x)$. Comme présentée dans l'article \cite{HIN1984} cette partie est calculé à partir d'un exemple $x$ de la base d'entrainement. La seconde partie en revanche demande d'échantillonner selon la loi jointe de $x$ et $h$. Elle ne peut être calculée que approximativement, et on aimerait qu'elle l'échantillonnage soit réalisé à partir du modèle courant. Il existe principalement deux méthode afin d'échantillonner selon la loi jointe $P(x, h)$.
+
+
+\paragraph{Contrastive Divergence. } Cette méthode consiste à échantillonner $x$ et $h$ grâce à un très court échantillonneur de Gibbs initialisé par un exemple $x$ de la base d'entrainement. La pratique a montré que le CD-1 (une seule étape) est souvent meilleure. L'idée serait que les échantillons risquent d'être très biaisés, mais qu'ils sont échantillonnés selon le modèle et qu'ils permettent au gradient d'être stable.
+
+
+\paragraph{Persistent Contrastive Divergence. } Cette méthode est très proche de la \textit{Contrastive Divergence}. En effet, à chaque calcul d'un nouvel échantillon, plutôt que de prendre un exemple de la base de train, l'algorithme récupère l'échantillon $x$ obtenu par échantillonnage de l'étape précédente. Ainsi l'algorithme implémente un échantillonneur de Gibbs à travers les différentes mises à jour du RBM. Cette méthode permet de limiter le biais de l'échantillonneur, mais permet comme pour la \textit{Contrastive Divergence} de conserver une continuité entre les échantillons.
+
+
+Après plusieurs tentatives d'implémentation non efficace en python (lenteur et mémoire), nous avons essayé la librairie de Theano qui n'est cependant pas très rapide uniquement sous CPU. Nous avons ainsi utilisé l'implémentation de scikit-learn \texttt{sklearn.neural\_network.BernoulliRBM} qui implémente une \textit{Persistent Contrastive Divergence}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% MLP %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -279,10 +330,140 @@ Nous avons implémenter l'algorithme le plus classique dans le cas de l'entraîn
 \end{algorithmic}
 \end{algorithm}
 
-La prédiction dans le cas d'un MLP consiste uniquement à, une fois les poids établis, utiliser les données et monter le graphe pour retrouver leur représentation. En ce sens, on considère un MLP comme un pur outils de représentation - vision non-paramétrique. On peut toutefois lui rajouter une régression logistique à l'issue - lorsque l'on dispose de données supervisées - qui permet d'en faire un outils de classification supervisée.  
+La prédiction dans le cas d'un MLP consiste uniquement à, une fois les poids établis, utiliser les données et monter le graphe pour retrouver leur représentation. En ce sens, on considère un MLP comme un pur outils de représentation - vision non-paramétrique. On peut toutefois lui rajouter une régression logistique à l'issue - lorsque l'on dispose de données supervisées - qui permet d'en faire un outils de classification supervisée. Nous avons testé le MLP sur des exemples simples - base de données créée par nous-même et étiquette associé. Les résultats étaient toujours très concluant et rapide. 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\subsection{Le processus complet}
+
+
+Le processus est décrit par le pseudo code \ref{ProcessComplet}. Il consiste dans un premier temps à l'entrainement des différents RBMs. Le premier est entraîné à partir de la base d'entrainement. Pour les RBMs suivants, on échantillonne des variables cachées à partir de l'état du précédent RBM. Dans notre processus, nous avons utilisé pour chaque échantillon de la nouvelle base d'entrainement une chaine de gibbs de longueur 1. Ce procédé est discutable, mais il semble cohérent avec les méthodes couramment utilisés. Une fois l'intégralité des RBMs entrainés, nous initialisons le MLP grâce aux poids des RBMs. Puis nous l'entrainons. Après cette étape de \textit{fine-tuning}, nous entraînons la régression logistique. Des tests de classifications sont alors réalisés, ils sont décrits dans la section suivante.
+
+
+\begin{algorithm}[ht!]
+	\caption{Entrainement d'un DBN}
+	\label{ProcessComplet}
+	\begin{algorithmic}
+		\State H $\gets$ digits
+		\For{currentRBM in RBMs}
+				\State Entrainer currentRBM à partir de H
+				\If{currentRBM n'est pas le dernier}
+					\State Créer une base d'entrainement en échantillonnant des variables cachées H à partir du modèle de previousRBM et de H
+				\EndIf
+			\State previousRBM $\gets$ currentRBM
+		\EndFor
+		
+		\State MLP.weights $\gets$ RBMs.weights
+		\State Entrainement du MLP à partir de digits
+		\State Entrainement de la regression logistique
+		
+		\State Test à partir d'une base de test
+	\end{algorithmic}
+\end{algorithm}
+
+
+\subsection{Les résultats}
+
+
+Nous présentons ici les résultats obtenus sur différentes bases de données. 
+
+
+\subsubsection{Comparaison RBM et DBN}
+
+
+Par \textit{GridSearch}, les paramètres pour l'apprentissage d'un RBM seul nous donne un \emph{learning rate} égal à 0.04, et un nombre d'itération égal à 20. Nous utilisons 100 variables cachées. Les résultats de ce RBM seul donne les résultats présentés dans le tableau \ref{RBMDigits}.
+\begin{figure}[ht!]\centering
+	\begin{tabular}{l|c|c|c|c}
+						 &  precision  &  recall & f1-score  & support \\
+						0&       0.99   &   0.99    &  0.99   &    174 \\
+						1 &      0.92    &  0.95     & 0.93     &  184 \\
+						2  &     0.95    &  0.98      &0.97    &   166 \\
+						3   &    0.97    &  0.91     & 0.94   &    194 \\
+						4    &   0.97    &  0.95    &  0.96  &     186 \\
+						5     &  0.93  &    0.93     & 0.93 &      181 \\
+						6      & 0.98    &  0.97    &  0.97&       207 \\
+						7       &0.95  &    1.00    &  0.97   &    154 \\
+						8       &0.90   &   0.88     & 0.89   &    182 \\
+						9 &      0.91    &  0.93    &  0.92     &  169 \\
+	avg / total  &     0.95    &  0.95    &  0.95    &  1797 \\
+	\end{tabular}
+	\label{RBMDigits}
+	\caption{Résulats obtenus après apprentissage d'un RBM puis d'une regression logisitque sur la petite base de données des digits.}
+\end{figure}
+
+
+On peut comparer les résultats obtenus avec ceux que l'on obtient avec notre apprentissage d'un DBN à deux couches (figure \ref{DBNDigits}).
+
+
+\begin{figure}[ht!]
+\centering
+	\begin{tabular}{l|c|c|c|c}
+	& precision   & recall  &f1-score &  support \\
+          0&       0.99&      0.99&      0.99    &   174 \\
+          1 &      0.94 &     0.92 &     0.93    &   184\\
+          2  &     0.93  &    0.98  &    0.95       &166\\
+          3   &    0.94   &   0.91   &   0.92       &194\\
+          4    &   0.97    &  0.91    &  0.94      & 186\\
+          5     &  0.94     & 0.91     & 0.92     &  181\\
+          6      & 0.98      &0.95      &0.96    &   207\\
+          7       &0.93&      0.98&      0.96   &    154\\
+          8&       0.86 &     0.92 &     0.89  &     182\\
+          9 &      0.89  &    0.93  &    0.91 &      169\\
+avg / total  &     0.94   &   0.94   &   0.94&      1797\\
+	\end{tabular}
+	\label{DBNDigits}
+	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une regression logisitque sur la petite base de données des digits.}
+\end{figure}
+
+Le fait que nos résultats de DBN ne soit pas aussi bons que ceux du RBM peut venir de deux raisons. D'une part, l'optimisation du RBM est complète - avec l'outil de \texttt{scikit}. D'autre part, notre échantillonnage pour la base d'entraînement du deuxième RBM est probablement trop biaisé - on utilise une CD-1 alors que l'on pourrait faire une chaîne de Gibbs plus longue. 
+
+\subsubsection{Apprentissage sur la vraie base}
+
+
+L'apprentissage sur la vraie base est très long. Ainsi nous n'avons pas pu optimiser les paramètres nous même. Nous avons utilisés l'ordre de grandeur des paramètres obtenus par \textit{GridSearch} sur www.deeplearning.net. Pour les RBMs on prend un \emph{learning rate} égal à 0.01, et nous les initialisons avec 1000 variables cachées chacune. L'apprentissage a duré environ 6h, et nous obtenons les résultats de la figure \ref{DBNBigMnist}.
+
+
+\begin{figure}[ht!]\centering
+	\begin{tabular}{l|c|c|c|c}
+           &  precision&    recall&  f1-score&   support\\
+        0.0&       0.97 &     0.98 &     0.98 &     1312\\
+        1.0 &      0.99  &    0.98  &    0.98  &    1604\\
+        2.0  &     0.95   &   0.96   &   0.95   &   1348\\
+        3.0   &    0.94    &  0.95    &  0.95    &  1427\\
+        4.0    &   0.97     & 0.97     & 0.97     & 1362\\
+        5.0      & 0.96      &0.93      &0.94      &1280\\
+        6.0     &  0.97&      0.98&      0.97&      1397\\
+        7.0       &0.96 &     0.95 &     0.96 &     1461\\
+        8.0&       0.94  &    0.96  &    0.95  &    1390\\
+        9.0 &      0.94   &   0.94   &   0.94   &   1419\\
+avg / total   &    0.96     & 0.96    &  0.96    & 14000
+	\end{tabular}
+	\label{DBNBigMnist}
+	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une regression logisitque sur la grande base de données des digits.}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+\section*{Conclusion}
+
+Dans un environnement où l'intelligence artificielle doit faire face à des données de plus en plus hétéroclites et où l'homme n'a pas de connaissance \emph{a priori}, la représentation abstraite semble prometteuse. Nous avons vu ici une méthode parmi tant d'autre, celle de l'apprentissage profond. Certaines représentations - comme les \emph{convolution network} qui nécessitent une structure de signal - sont des alternatives à ce que nous avons étudié. 
+
+En première partie, nous avons étudié les méthodes principales de \emph{deep learning}, et avons essayé de donner une idée intuitive de comment cela fonctionnait. Nous nous sommes ensuite intéressé un peu plus en profondeur à certains algorithmes, nous avons en particulier étudié les RBM, MLP et DBN. Les résultats fournis nous montrent que ces représentations ne sont pas absconses, mais pour autant elles nécessite une grosse phase d'apprentissage et de réglage des paramètres. Ceci peut être rédhibitoire dans certains cas et surtout ne supporte pas les calculs \emph{on-line}.
+
+
+
+
 
 
 \newpage
