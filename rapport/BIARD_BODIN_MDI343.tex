@@ -1,5 +1,5 @@
 \documentclass[10pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
+\usepackage[]{inputenc}
 \usepackage[francais]{babel}
 \usepackage[T1]{fontenc}
 \usepackage{amsmath}
@@ -11,10 +11,6 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{cite}
-
-
-
-
 
 \renewcommand{\headrulewidth}{1pt}
 \fancyhead[R]{} 
@@ -157,7 +153,7 @@ où $\sigma$ est la fonction d'activation, et les $(b,d)$ sont les biais. Pour a
 
 Nous en reparlerons plus en détail dans la partie d'implémentation, mais l'entraînement d'un RBM nécessite d'effectuer des étapes d'échantillonnage - de Gibbs - souvent par des méthodes MCMC. Il existe plusieurs méthodes pour accélérer le processus, nous parlerons de la \emph{Contrastive Divergence} (CD) et du \emph{Stochastic Maximum Likelihood} (SML).
 
-
+\input{./antoinePart}
 
 \newpage
 
