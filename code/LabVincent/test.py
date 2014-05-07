@@ -1,3 +1,10 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Tue May 06 09:22:39 2014
+
+@author: Vincent
+"""
+
 from __future__ import print_function
 
 import numpy as np
@@ -17,21 +24,16 @@ from sklearn.pipeline import Pipeline
 from pprint import pprint
 from sklearn.utils import check_random_state
 
-###############################################################################
+
+#==============================================================================
+# Données + settings
+#==============================================================================
 # Settings
 n_sample_second_layer_training = 10
 
-# mnist = fetch_mldata('MNIST original', data_home='../data')
-# digits = datasets.load_digits()
-# X = mnist.data
-# Y = mnist.target
-# X = (X - np.min(X, 0)) / (np.max(X, 0) + 0.0001)
-# Chargement des digits
-
 X, Y = utils.load_data()
 print(X.shape)
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y,
-                                                    test_size=0.2,
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2,
                                                     random_state=0)
 
 # Models we will use
@@ -39,38 +41,96 @@ rbm_layer_1 = BernoulliRBM(random_state=0, verbose=True)
 rbm_layer_2 = BernoulliRBM(random_state=0, verbose=True)
 logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
 
-###############################################################################
-# Training du premier rbm
-rbm_layer_1.learning_rate = 0.04
+
+#==============================================================================
+# Entrainement RBMs
+#==============================================================================
+#-------------------- Training du premier rbm --------------------
+
+# grid_search pour determiner parametres optimaux du premier RBM.
+grid_search_test = False
+if grid_search_test:
+    # Models we will use
+    logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
+    rbm = BernoulliRBM(random_state=0, verbose=True)
+    classifier = Pipeline(steps=[('rbm_layer_1', rbm), ('logistic', logistic)])
+
+    parameters = {'rbm_layer_1__learning_rate': np.linspace(0.04, 0.05, num=10)}
+    gridSearch = grid_search.GridSearchCV(classifier, parameters)
+    # Training RBM-Logistic Pipeline
+    print("Performing grid search...")
+    print("pipeline:", [name for name, _ in classifier.steps])
+    print("parameters:")
+    pprint(parameters)
+    print(gridSearch.fit(X_train, Y_train))
+    print("Best score: %0.3f" % gridSearch.best_score_)
+    print("Best parameters set:")
+    best_parameters = gridSearch.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+
+
+rbm_layer_1.learning_rate = 0.048888888888888891
 rbm_layer_1.n_iter = 25
 rbm_layer_1.n_components = 100
-# Training RBM
+
 print("Debut training RBM1")
 print(X_train.shape)
 t0 = time.clock()
 rbm_layer_1.fit(X_train)
 print(time.clock() - t0)
+
 # creation d'une base de train a partir d'echantillonnage
 # de variable cachees du premier rbm
 n_sample_second_layer_training = int(X.shape[0])
 H1_train = np.zeros(shape=(n_sample_second_layer_training, rbm_layer_1.n_components))
+H1_label_train = np.zeros(shape = (n_sample_second_layer_training, 1))
 comp = 0
 while (comp < n_sample_second_layer_training):
-	rng = check_random_state(rbm_layer_1.random_state)
-	randTemp = rd.randint(0, X.shape[0] - 1)
-	H1_train[comp] = rbm_layer_1._sample_hiddens(X[randTemp], rng)
-	comp = comp + 1
+    rng = check_random_state(rbm_layer_1.random_state)
+    randTemp = rd.randint(0, X.shape[0] - 1)
+    H1_train[comp] = rbm_layer_1._sample_hiddens(X[randTemp], rng)
+    H1_label_train[comp] = Y[randTemp]
+    comp = comp + 1
+ 
 
-# Training du second rb
-rbm_layer_2.learning_rate = 0.01
+#-------------------- Training du second rbm --------------------
+
+# grid_search pour determiner parametres optimaux du deuxieme RBM.
+grid_search_test = False
+if grid_search_test:
+    # Models we will use
+    logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
+    rbm = BernoulliRBM(random_state=0, verbose=True)
+    classifier = Pipeline(steps=[('rbm_layer_2', rbm), ('logistic', logistic)])
+
+    parameters = {'rbm_layer_2__learning_rate': np.linspace(0.04, 0.05, num=10)}
+    gridSearch = grid_search.GridSearchCV(classifier, parameters)
+    # Training RBM-Logistic Pipeline
+    print("Performing grid search...")
+    print("pipeline:", [name for name, _ in classifier.steps])
+    print("parameters:")
+    pprint(parameters)
+    print(gridSearch.fit(H1_train, H1_label_train))
+    print("Best score: %0.3f" % gridSearch.best_score_)
+    print("Best parameters set:")
+    best_parameters = gridSearch.best_estimator_.get_params()
+    for param_name in sorted(parameters.keys()):
+        print("\t%s: %r" % (param_name, best_parameters[param_name]))
+        
+
+rbm_layer_2.learning_rate = 0.04
 rbm_layer_2.n_iter = 25
 rbm_layer_2.n_components = 100
-# Training RBM
+
 print("Debut training RBM1")
 print(H1_train.shape)
 t0 = time.clock()
 rbm_layer_2.fit(H1_train)
 print(time.clock() - t0)
+
+
+#-------------------- Creation matrice de poids --------------------
 rbm1w = rbm_layer_1.components_.T
 bias1h = rbm_layer_1.intercept_hidden_
 bias1h = bias1h.reshape(bias1h.size, 1)
@@ -83,10 +143,15 @@ bias2h = bias2h.reshape(bias2h.size, 1)
 bias2v = rbm_layer_2.intercept_visible_
 bias2v = bias2v.reshape(bias2v.size, 1)
 
-W1 = np.vstack((np.hstack((rbm1w, bias1v)), np.hstack((bias1h.T, np.zeros(shape=(1, 1))))))
-W2 = np.vstack((np.hstack((rbm2w, bias2v)), np.hstack((bias2h.T, np.zeros(shape=(1, 1))))))
+W1 = np.vstack((np.hstack((rbm1w, bias1v)),
+                np.hstack((bias1h.T, np.zeros(shape=(1, 1))))))
+W2 = np.vstack((np.hstack((rbm2w, bias2v)), 
+                np.hstack((bias2h.T, np.zeros(shape=(1, 1))))))
 
 weights = [W1, W2]
+
+
+#-------------------- training MLP --------------------
 layers = [64+1, rbm_layer_1.n_components+1, rbm_layer_2.n_components+1]
 
 print("Training MLP")
@@ -95,6 +160,8 @@ mlp = MLP.MLP(layers, weights=weights)
 mlp.fit(X_train, Y_train, epochs=1000)
 print(time.clock() - t0)
 
+
+#-------------------- caclul representation --------------------
 print("Calcul nouvelles representations")
 print("Train")
 t0 = time.clock()
@@ -123,6 +190,9 @@ for i in range(int(X_test.shape[0])):
 	X_test_new[i] = a
 print(time.clock() - t0)
 
+
+
+#-------------------- Classification sur representations --------------------
 print("Training SVM")
 t0 = time.clock()
 clf = svm.SVC()

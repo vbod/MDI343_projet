@@ -55,7 +55,7 @@ class MLP:
                                     (layers[i-1]+1, layers[i]+1)) + low)
                                     
             self.weights.append((high-low)*np.random.random((layers[i]+1, 
-                                layers[i+1])) + low)
+                                layers[i+1]+1)) + low)
         else:
             self.weights = weights
     
@@ -118,9 +118,9 @@ class MLP:
               couche
         """
         X = np.hstack((X, np.ones((int(X.shape[0]),1))))
-        res = np.zeros((int(X.shape[0]), int(self.layers[-1])))
+        res = np.zeros((int(X.shape[0]), int(self.layers[-1]+1)))
         for i in range(int(X.shape[0])):
-            a = X[i]
+            a = X[i,:]
             for j in range(0, len(self.weights)):
                 a = self.activation(np.dot(a, self.weights[j]))
             res[i] = a
@@ -140,14 +140,17 @@ class MLP:
 
 
 if __name__ == '__main__':    
-    mlp = MLP([2,3,2])
-    X = np.array([[0, 0],
-                  [0, 1],
-                  [1, 0],
-                  [1, 1]])
-    y = np.array([0, 1, 1, 0])
+    mlp = MLP([64, 100, 100])
+#    X = np.array([[0, 0],
+#                  [0, 1],
+#                  [1, 0],
+#                  [1, 1]])
+#    y = np.array([0, 1, 1, 0])
+    X = np.vstack((np.ones((1,64)), np.zeros((1,64))))
+    y = np.array([1,0])
     mlp.fit(X, y)
-    X_test = np.array([[0, 0], [0, 1], [1, 0], [1,1]])
+#    X_test = np.array([[0, 0], [0, 1], [1, 0], [1,1]])
+    X_test = np.vstack((np.ones((1,64)), np.zeros((1,64))))
     res = mlp.predict(X_test)
     print res
     

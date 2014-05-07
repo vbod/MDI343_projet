@@ -11,9 +11,13 @@
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 \usepackage{cite}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{algorithmicx}
 
 
-
+\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+\renewcommand{\algorithmicensure}{\textbf{Output:}}
 
 
 \renewcommand{\headrulewidth}{1pt}
@@ -33,7 +37,7 @@ Apprentissage profond, réseau de neurones, \emph{etc.}}
 \vspace{2cm}
 \renewcommand{\abstractname}{Résumé}
 \begin{abstract}
-Ce projet s'attelle à la question de la représentation des données en \emph{machine learning}. Ces représentations, utilisées ensuite par l'algorithme de décision - régression logistique, SVM... - jouent un rôle primordial car porteuses de l'information. A la méthode classique de création de \emph{features} par des connaissances \emph{a priori}, on oppose des méthodes d'extraction de représentation par des structures dites profondes. Nous étudierons quelques algorithmes et comparerons les résultats.
+Ce projet s'attelle à la question de la représentation des données en \emph{machine learning}. Ces représentations, utilisées ensuite par l'algorithme de décision - régression logistique, SVM... - jouent un rôle primordial car porteuses de l'information. A la méthode classique de création de \emph{features} par des connaissances \emph{a priori}, on oppose des méthodes d'extraction de représentation par des structures dites profondes. Notre projet a consisté essentiellement en deux parties : une première partie de compréhension et d'étude des principales méthodes, et une seconde d'implémentation et de test sur quelques unes de ces méthodes (RBM, MLP, DBN).
 \end{abstract}
 
 \newpage
@@ -137,7 +141,7 @@ où $\mathcal{Z} = \sum_{x,h}e^{-E(v,h;\theta)}$ est la fonction de partition. C
 
 
 
-\subsection{Restricted Boltzmann Machine}
+\subsubsection{Restricted Boltzmann Machine}
 
 Comme montré dans la Fig.(\ref{fig3}), un RBM est une machine de Boltzmann où les interactions inter-couches sont gelées. De par la forme de son graphe, le RBM a des propriétés d'indépendances conditionnelles qui rendent l'inférence facile en pratique : 
 \begin{equation}
@@ -157,6 +161,127 @@ où $\sigma$ est la fonction d'activation, et les $(b,d)$ sont les biais. Pour a
 
 Nous en reparlerons plus en détail dans la partie d'implémentation, mais l'entraînement d'un RBM nécessite d'effectuer des étapes d'échantillonnage - de Gibbs - souvent par des méthodes MCMC. Il existe plusieurs méthodes pour accélérer le processus, nous parlerons de la \emph{Contrastive Divergence} (CD) et du \emph{Stochastic Maximum Likelihood} (SML).
 
+
+
+\subsection{Deep Belief Networks (DBN)}
+
+Un DBN est une structure d'apprentissage de représentation qui consiste en un empilement de RBM. Le premier RBM prend en entrée les variables visibles - données du problème - et, par échantillonnage en extrait un ensemble de variables cachées. Celles-ci sont alors utilisées comme entrée de la seconde couche et ainsi de suite, cf. Fig.(\ref{fig4}). L'entraînement est donc de type \emph{greedy}. Finalement, la probabilité jointe entre $x$ et $h$ s'écrit :
+\begin{equation}
+p(x, h^1, \cdots, h^l) = \left( \prod_{k=0}^{l-2} p(h^k |h^{k+1}) \right) p(h^{l-1}, h^l)
+\end{equation}
+avec $x=h^0$. Nous verrons l'implémentation de l'algorithme en détail plus tard. En modèle graphique, cette décomposition s'interprète comme un graphe dont la dernière couche est non-orientée tandis que toutes les précédentes sont des graphes orientés.
+
+L'entraînement du DBN repose en outre sur un \emph{fine-tuning} des paramètres obtenus par apprentissage par couches sur les RBM. Le \emph{fine-tuning} s'effectue soit selon un \emph{proxy} de la log-likelihood - cas non-supervisé - ou d'un critère d'erreur dans le cas supervisé. Nous nous plaçons dans le cas supervisé, et la méthode de classification appliquée est le MLP.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = .3\columnwidth]{fig/DBN3.png}
+\caption{Un \emph{deep belief network} (DBN), la dernière couche est non orientée, tandis que toutes les autres le sont.}
+\label{fig4}
+\end{figure}
+
+Nous pouvons donner ici une justification rapide du \emph{pre-training} par couche. Dans le cas de deux couches par exemple, il a été montré \cite{DBLP:bibsonomy_HintonSalakhutdinov2006b} que :
+\begin{equation}
+\log p(x) = \text{KL}(Q(h^{(1)}|x) \| p(h^{(1)}|x)) + \text{H}_{Q(h^{(1)|x)}} + \sum_h Q(h^{(1)}|x) \left( \log p(h^{(1)}) + \log p(x | h^{(1)}))\right)
+\end{equation}
+où KL est la divergence de Kulbac-Leibler, H l'entropie, $Q(h^{(1)}|x)$ la distribution \emph{a posteriori} du premier RBM (appris seul) et $p(h^{(1)}|x)$ celle après l'apprentissage entier du DBN. Si l'initialisation est $W^{(2)} = W^{{(1)}T}$ alors $Q(h^{(1)}|x) = p(h^{(1)}|x)$ et la divergence est nulle. Fixer ensuite $W^{(1)}$ et optimiser selon $W^{(2)}$ ne peut qu'augmenter la log-vraisemblance.
+
+
+
+
+\subsection{Deep Boltzmann Machine (DBM)}
+
+Un DBM est une structure profonde qui,  en première approche tout au moins, ressemble fortement à un DBN. De la même manière que le DBN, le DBM extrait une représentation abstraite des données. Également, un faible nombre de données étiquetées est nécessaire à la tâche de classification, ce qui peut être intéressant dans certains cas. Il est dit dans \cite{SalHinton07} que l'inférence dans les DBM est plus robuste que dans les DBN car les entrées ambiguës ont moins d'impact. 
+
+Un DBM est constitué de RBM empilés comme dans le cas des DBN. L'étape de \emph{pre-training} se résume à un entraînement couche par couche - \emph{greedy} - de ces RBM. L'idée pour autant est de modifier un peu cette étape pour éviter le double passage quand on fait les étapes de haut vers le bas et bas vers le haut. Ainsi, pour le niveau le plus bas - plus bas RBM - les entrées sont doublées avec les poids visibles-cachés inchangés, cf. Fig.(\ref{fig5}). Une étape d'évaluation du DBM basé sur des méthode de Monte Carlo - \emph{Annealed Importance Sampling} - a ensuite lieu. Finalement, on termine comme dans le cas du DBN par du \emph{fine-tuning} avec un MLP par exemple - qui converti la représentation en étiquette.
+
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = \columnwidth]{fig/dbm.png}
+\caption{(extrême gauche) Un DBN avec sa dernière couche non orientée ; (gauche) graphe de DBM, toutes les couches sont non orientées ; (droite) \emph{pre-training} des RBM couche par couche ; (extrême droite) composition des couches pour former le DBM.}
+\label{fig5}
+\end{figure}
+
+
+
+
+\subsection{Auto-Encoder}
+
+La dernière méthode que nous présentons succinctement est celle des \emph{auto-encoder}. Partant d'un ensemble d'apprentissage $x^{(t)}$ on extrait des descripteurs $h^{(t)}$ à l'aide d'une fonction paramétrique $f_{\theta}(x)$. Une autre fonction $g_{\theta}$ est appelé le décodeur et permet de faire la transformation inverse, $r=g_{\theta}(h)$ s'appelle la reconstruction. Une erreur de reconstruction est définie $L(x^{(t)}, r)$. Finalement, l'entraînement de l'auto-encodeur consiste à trouver le paramètre $\theta$ vérifiant :
+\begin{equation}
+\mathcal{J}_{\text{DAE}}(\theta) = \sum_{t} L(x^{(t)}, g_{\theta}(f_{\theta}(x^{(t)})))
+\end{equation}
+La forme la plus usuelle pour les fonctions $f_{\theta}$ et $g_{\theta}$ est : 
+\begin{equation}
+\begin{array}{rll}
+f_{\theta}(x) & = & s_f(b + Wx) \\
+g_{\theta}(h) & = & s_g(d + W'h)
+\end{array}
+\end{equation}
+où typiquement $s_f$ et $s_g$ sont des sigmoïdes ou des tangentes hyperboliques. 
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%% MLP %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\subsubsection{Implémentation du MLP}
+
+Nous avons implémenter l'algorithme le plus classique dans le cas de l'entraînement du MLP : la \emph{backpropagation}. Cet algorithme se décompose en deux étape, une première de propagation, et une seconde de mise à jour des poids. 
+
+\paragraph{Initialisation. }L'initialisation est cruciale dans ces algorithmes de \emph{backpropagation}. De plus, comme nous allons utiliser le MLP dans le cas de poids initialisés par empilement de RBM - pour le DBN - notre implémentation doit prendre en compte deux possibilités. Soit on lui envoie les poids, soit on utilise le MLP à part entière et dans ce cas là les poids doivent être initialisés. Dans \cite{GlorotAISTATS2010}, il est expliqué que les poids doivent vérifiés (si $n_1$ et $ n_2$ indiquent le nombre d'éléments au couches d'entrées et de sorties respectivement) : 
+\begin{equation}
+\begin{array}{ll}
+\displaystyle \left[ - \sqrt{\frac{6}{n_1+n_2}} , \sqrt{\frac{6}{n_1+n_2}}\right] & \text{pour activation en} \tanh \\
+\displaystyle \left[ - 4\sqrt{\frac{6}{n_1+n_2}} , 4\sqrt{\frac{6}{n_1+n_2}}\right] & \text{pour activation en sigmoïd} 
+\end{array}
+\end{equation}
+
+
+\paragraph{Propagation. }La propagation correspond à une étape de montée du graphe pour générer les sorties correspondantes puis à une étape de descente qui génère des $\delta$. Ceci nécessite une étiquette $y$ que l'on compare avec la variable cachée finale $h$ - éventuellement ceci peut être vectoriel. Nous verrons dans Alg.(\ref{algoVince}) l'algorithme précisément. 
+
+\paragraph{Mise à jour des poids. }Pour chaque synapse on met à jour les poids avec les $\delta$ calculé par propagation. Ceci nécessite un paramètre, le \emph{learning rate} qui influence fortement la qualité et la vitesse de l'apprentissage. \\
+
+
+\begin{algorithm}[ht!]
+\caption{Entraînement du Multi-Layer Perceptron (MLP)}
+\label{algoVince}
+\begin{algorithmic}
+\Require $X$ : matrice d'entrainement, $y$ : étiquettes d'entraînement, $l_r$ : \emph{learning\_rate}, $epochs$ : nombre d'itérations, ($W$ : liste de matrice de poids)
+
+\Ensure $W$ : liste de matrice de poids optimaux
+
+\State Rajoute une colonne de 1 à la matrice $X$ (biais),
+\For{$k\in\texttt{range}(epochs)$}
+	\State $\texttt{states} = [X[i]]$ où $i$ est un indice de ligne tiré aléatoirement,
+	
+	\For{$j$ monte le graphe (propagation)}
+		\State $\texttt{states.append(states}[j]\cdot W[j])$
+	\EndFor
+	
+	\State \texttt{error} = y[i] - \texttt{states}[end]
+	\State $\delta = [\texttt{error}*\partial\sigma(\texttt{states}[end])]$
+		
+	\For{$j$ descend le graphe (backpropagation)}
+		\State $\texttt{deltas.append((deltas}[end]\cdot W[j]^T) \times \partial \sigma(\texttt{states}[j]))$
+	\EndFor
+	\State $\delta .$revese()
+	
+	\For{$i$ monte le graphe (mise à jour)}
+		\State W[i] += $l_r(\texttt{vecteur de nombres de composant}^T\cdot \delta)$
+	\EndFor
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+
+La prédiction dans le cas d'un MLP consiste uniquement à, une fois les poids établis, utiliser les données et monter le graphe pour retrouver leur représentation. En ce sens, on considère un MLP comme un pur outils de représentation - vision non-paramétrique. On peut toutefois lui rajouter une régression logistique à l'issue - lorsque l'on dispose de données supervisées - qui permet d'en faire un outils de classification supervisée.  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newpage

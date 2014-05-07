@@ -1,0 +1,14 @@
+\begin{algorithm}
+\caption{TRW-S algorithm}
+\label{trws}
+\begin{algorithmic}
+\Require graph $\mathcal{G} = ( \mathcal{V}, \mathcal{E})$ with energy $E(\mathbf{x}|\theta)$
+\Ensure $E^*$ lower bound on the energy
+
+\State decompose $\mathcal{G}$ into trees $T\in\mathcal{T}$ entirely covering $\mathcal{G}$.
+\For{$p \in \mathcal{V}$}
+	\State Run BP on all trees $T$ such that $p\in T$
+	\State Average node $p$
+\EndFor
+\end{algorithmic}
+\end{algorithm}

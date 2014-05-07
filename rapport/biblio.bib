@@ -40,3 +40,41 @@
   location = {Chia Laguna Resort, Sardinia, Italy}, 
   abstract = {Whereas before 2006 it appears that deep multi-layer neural networks were not successfully trained, since then several algorithms have been shown to successfully train them, with experimental results showing the superiority of deeper vs less deep architectures. All these experimental results were obtained with new initialization or training mechanisms. Our objective here is to understand better why standard gradient descent from random initialization is doing so poorly with deep neural networks, to better understand these recent relative successes and help design better algorithms in the future. We first observe the influence of the non-linear activations functions. We find that the logistic sigmoid activation is unsuited for deep networks with random initialization because of its mean value, which can drive especially the top hidden layer into saturation. Surprisingly, we find that saturated units can move out of saturation by themselves, albeit slowly, and explaining the plateaus sometimes seen when training neural networks. We find that a new non-linearity that saturates less can often be beneficial. Finally, we study how activations and gradients vary across layers and during training, with the idea that training may be more difficult when the singular values of the Jacobian associated with each layer are far from 1. Based on these considerations, we propose a new initialization scheme that brings substantially faster convergence.}
 }
+
+@article{DBLP:bibsonomy_HintonSalakhutdinov2006b,
+   author              = {G E Hinton and 
+                          R R Salakhutdinov},
+   title               = {Reducing the dimensionality of data with neural networks},
+   journal             = {Science},
+   year                = {2006},
+   pages               = {504-507},
+}
+
+@article{SalHinton07,
+author=         "Ruslan Salakhutdinov and Geoffrey Hinton",
+title=          "Deep {B}oltzmann Machines",
+booktitle=      "Proceedings of the International Conference on Artificial
+                 Intelligence and Statistics",
+volume=         "5",
+pages=		"448-455",
+year=           "2009"
+}
+
+@techreport{HIN1984,
+  added-at = {2008-03-11T14:52:34.000+0100},
+  address = {Pittsburgh, PA},
+  author = {Hinton, Geoffrey E. and Sejnowski, Terrence J. and Ackley,
+		  David H.},
+  biburl = {http://www.bibsonomy.org/bibtex/2f532e5a65be6f76beb17fd353d86078f/idsia},
+  citeulike-article-id = {2377113},
+  institution = {Computer Science Department, Carnegie Mellon University},
+  interhash = {cda4975597a0153d829c85ea896cf748},
+  intrahash = {f532e5a65be6f76beb17fd353d86078f},
+  keywords = {neural networks},
+  number = {CMU-CS-84-119},
+  priority = {2},
+  title = {{B}oltzmann Machines: {C}onstraint Satisfaction Networks
+		  That Learn},
+  year = {1984},
+  url_pdf = {absps/bmtr.pdf}
+}

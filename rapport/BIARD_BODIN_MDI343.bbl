@@ -12,4 +12,14 @@ Yoshua Bengio and Xavier Glorot.
   networks.
 \newblock 9:249--256, May 2010.
 
+\bibitem{DBLP:bibsonomy_HintonSalakhutdinov2006b}
+G~E Hinton and R~R Salakhutdinov.
+\newblock Reducing the dimensionality of data with neural networks.
+\newblock {\em Science}, pages 504--507, 2006.
+
+\bibitem{SalHinton07}
+Ruslan Salakhutdinov and Geoffrey Hinton.
+\newblock Deep {B}oltzmann machines.
+\newblock 5:448--455, 2009.
+
 \end{thebibliography}
