@@ -1,6 +1,9 @@
-\BOOKMARK [2][]{Outline0.1}{Revue \351l\351mentaire des m\351thodes de deep learning}{}% 1
-\BOOKMARK [3][]{Outline0.1.1.3}{R\351seau de neurones}{Outline0.1}% 2
-\BOOKMARK [3][]{Outline0.1.2.4}{Multilayer Perceptron \(MLP\)}{Outline0.1}% 3
-\BOOKMARK [2][]{Outline0.2}{Impl\351mentation et r\351sultats}{}% 4
-\BOOKMARK [3][]{Outline0.2.1.7}{Impl\351mentation}{Outline0.2}% 5
-\BOOKMARK [3][]{Outline0.2.2.11}{R\351sultats}{Outline0.2}% 6
+\BOOKMARK [2][]{Outline0.2}{Revue \351l\351mentaire des m\351thodes de deep learning}{}% 1
+\BOOKMARK [3][]{Outline0.2.1.4}{R\351seau de neurones}{Outline0.2}% 2
+\BOOKMARK [3][]{Outline0.2.2.5}{Multilayer Perceptron \(MLP\)}{Outline0.2}% 3
+\BOOKMARK [3][]{Outline0.2.3.7}{Restricted Boltzmann Machine \(RBM\)}{Outline0.2}% 4
+\BOOKMARK [3][]{Outline0.2.4.9}{Deep Belief Networks \(DBN\)}{Outline0.2}% 5
+\BOOKMARK [3][]{Outline0.2.5.10}{Deep Boltzmann Machine \(DBM\)}{Outline0.2}% 6
+\BOOKMARK [2][]{Outline0.3}{Impl\351mentation et r\351sultats}{}% 7
+\BOOKMARK [3][]{Outline0.3.1.12}{Impl\351mentation}{Outline0.3}% 8
+\BOOKMARK [3][]{Outline0.3.2.16}{R\351sultats}{Outline0.3}% 9

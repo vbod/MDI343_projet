@@ -1,49 +1,65 @@
-\beamer@endinputifotherversion {3.26pt}
+\beamer@endinputifotherversion {3.31pt}
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
-\headcommand {\sectionentry {1}{Revue \IeC {\'e}l\IeC {\'e}mentaire des m\IeC {\'e}thodes de deep learning}{2}{Revue \IeC {\'e}l\IeC {\'e}mentaire des m\IeC {\'e}thodes de deep learning}{0}}
+\headcommand {\sectionentry {1}{Introduction}{2}{Introduction}{0}}
 \headcommand {\beamer@sectionpages {1}{1}}
 \headcommand {\beamer@subsectionpages {1}{1}}
 \headcommand {\slideentry {1}{0}{2}{2/2}{}{0}}
 \headcommand {\beamer@framepages {2}{2}}
-\headcommand {\beamer@subsectionentry {0}{1}{1}{3}{R\IeC {\'e}seau de neurones}}\headcommand {\beamer@subsectionpages {2}{2}}
-\headcommand {\slideentry {1}{1}{1}{3/3}{R\IeC {\'e}seau de neurones}{0}}
+\headcommand {\sectionentry {2}{Revue \IeC {\'e}l\IeC {\'e}mentaire des m\IeC {\'e}thodes de deep learning}{3}{Revue \IeC {\'e}l\IeC {\'e}mentaire des m\IeC {\'e}thodes de deep learning}{0}}
+\headcommand {\beamer@sectionpages {2}{2}}
+\headcommand {\beamer@subsectionpages {2}{2}}
+\headcommand {\slideentry {2}{0}{3}{3/3}{}{0}}
 \headcommand {\beamer@framepages {3}{3}}
-\headcommand {\beamer@subsectionentry {0}{1}{2}{4}{Multilayer Perceptron (MLP)}}\headcommand {\beamer@subsectionpages {3}{3}}
-\headcommand {\slideentry {1}{2}{1}{4/4}{Multilayer Perceptron (MLP)}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{1}{4}{R\IeC {\'e}seau de neurones}}\headcommand {\beamer@subsectionpages {3}{3}}
+\headcommand {\slideentry {2}{1}{1}{4/4}{R\IeC {\'e}seau de neurones}{0}}
 \headcommand {\beamer@framepages {4}{4}}
-\headcommand {\slideentry {1}{2}{2}{5/5}{Multilayer Perceptron (MLP)}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{2}{5}{Multilayer Perceptron (MLP)}}\headcommand {\beamer@subsectionpages {4}{4}}
+\headcommand {\slideentry {2}{2}{1}{5/5}{Multilayer Perceptron (MLP)}{0}}
 \headcommand {\beamer@framepages {5}{5}}
-\headcommand {\sectionentry {2}{Impl\IeC {\'e}mentation et r\IeC {\'e}sultats}{6}{Impl\IeC {\'e}mentation et r\IeC {\'e}sultats}{0}}
-\headcommand {\beamer@sectionpages {2}{5}}
-\headcommand {\beamer@subsectionpages {4}{5}}
-\headcommand {\slideentry {2}{0}{3}{6/6}{}{0}}
+\headcommand {\slideentry {2}{2}{2}{6/6}{Multilayer Perceptron (MLP)}{0}}
 \headcommand {\beamer@framepages {6}{6}}
-\headcommand {\beamer@subsectionentry {0}{2}{1}{7}{Impl\IeC {\'e}mentation}}\headcommand {\beamer@subsectionpages {6}{6}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{1}{1}{7}{Donn\IeC {\'e}es utilis\IeC {\'e}es}}
-\headcommand {\slideentry {2}{1}{1}{7/7}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{3}{7}{Restricted Boltzmann Machine (RBM)}}\headcommand {\beamer@subsectionpages {5}{6}}
+\headcommand {\slideentry {2}{3}{1}{7/7}{Restricted Boltzmann Machine (RBM)}{0}}
 \headcommand {\beamer@framepages {7}{7}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{1}{2}{8}{Impl\IeC {\'e}mentation du RBM}}
-\headcommand {\slideentry {2}{1}{2}{8/8}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\slideentry {2}{3}{2}{8/8}{Restricted Boltzmann Machine (RBM)}{0}}
 \headcommand {\beamer@framepages {8}{8}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{1}{3}{9}{Impl\IeC {\'e}mentation du MLP}}
-\headcommand {\slideentry {2}{1}{3}{9/9}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{4}{9}{Deep Belief Networks (DBN)}}\headcommand {\beamer@subsectionpages {7}{8}}
+\headcommand {\slideentry {2}{4}{1}{9/9}{Deep Belief Networks (DBN)}{0}}
 \headcommand {\beamer@framepages {9}{9}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{1}{4}{10}{Processus complet}}
-\headcommand {\slideentry {2}{1}{4}{10/10}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\beamer@subsectionentry {0}{2}{5}{10}{Deep Boltzmann Machine (DBM)}}\headcommand {\beamer@subsectionpages {9}{9}}
+\headcommand {\slideentry {2}{5}{1}{10/10}{Deep Boltzmann Machine (DBM)}{0}}
 \headcommand {\beamer@framepages {10}{10}}
-\headcommand {\beamer@subsectionentry {0}{2}{2}{11}{R\IeC {\'e}sultats}}\headcommand {\beamer@subsectionpages {7}{10}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{2}{1}{11}{Petite base + RBM}}
-\headcommand {\slideentry {2}{2}{1}{11/11}{R\IeC {\'e}sultats}{0}}
+\headcommand {\sectionentry {3}{Impl\IeC {\'e}mentation et r\IeC {\'e}sultats}{11}{Impl\IeC {\'e}mentation et r\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@sectionpages {3}{10}}
+\headcommand {\beamer@subsectionpages {10}{10}}
+\headcommand {\slideentry {3}{0}{2}{11/11}{}{0}}
 \headcommand {\beamer@framepages {11}{11}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{2}{2}{12}{Petite base + DBN}}
-\headcommand {\slideentry {2}{2}{2}{12/12}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@subsectionentry {0}{3}{1}{12}{Impl\IeC {\'e}mentation}}\headcommand {\beamer@subsectionpages {11}{11}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{1}{1}{12}{Donn\IeC {\'e}es utilis\IeC {\'e}es}}
+\headcommand {\slideentry {3}{1}{1}{12/12}{Impl\IeC {\'e}mentation}{0}}
 \headcommand {\beamer@framepages {12}{12}}
-\headcommand {\beamer@subsubsectionentry {0}{2}{2}{3}{13}{Grande base + DBN}}
-\headcommand {\slideentry {2}{2}{3}{13/13}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{1}{2}{13}{Impl\IeC {\'e}mentation du RBM}}
+\headcommand {\slideentry {3}{1}{2}{13/13}{Impl\IeC {\'e}mentation}{0}}
 \headcommand {\beamer@framepages {13}{13}}
-\headcommand {\beamer@partpages {1}{13}}
-\headcommand {\beamer@subsectionpages {11}{13}}
-\headcommand {\beamer@sectionpages {6}{13}}
-\headcommand {\beamer@documentpages {13}}
-\headcommand {\def \inserttotalframenumber {13}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{1}{3}{14}{Impl\IeC {\'e}mentation du MLP}}
+\headcommand {\slideentry {3}{1}{3}{14/14}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\beamer@framepages {14}{14}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{1}{4}{15}{Processus complet}}
+\headcommand {\slideentry {3}{1}{4}{15/15}{Impl\IeC {\'e}mentation}{0}}
+\headcommand {\beamer@framepages {15}{15}}
+\headcommand {\beamer@subsectionentry {0}{3}{2}{16}{R\IeC {\'e}sultats}}\headcommand {\beamer@subsectionpages {12}{15}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{2}{1}{16}{Petite base + RBM}}
+\headcommand {\slideentry {3}{2}{1}{16/16}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@framepages {16}{16}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{2}{2}{17}{Petite base + DBN}}
+\headcommand {\slideentry {3}{2}{2}{17/17}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@framepages {17}{17}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{2}{3}{18}{Grande base + DBN}}
+\headcommand {\slideentry {3}{2}{3}{18/18}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@framepages {18}{18}}
+\headcommand {\beamer@partpages {1}{18}}
+\headcommand {\beamer@subsectionpages {16}{18}}
+\headcommand {\beamer@sectionpages {11}{18}}
+\headcommand {\beamer@documentpages {18}}
+\headcommand {\def \inserttotalframenumber {18}}

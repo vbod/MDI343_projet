@@ -1,3 +1,19 @@
+\section*{Introduction}
+
+\begin{frame}{Introduction}
+\begin{itemize}
+\item Souvent, l'extraction d'une représentation repose sur une connaissance \emph{a priori} des données ;
+
+\item quantité de données différentes pose la question de la généralité de cette méthode ;
+
+\item volonté d'extraire - de manière non-supervisée - une représentation qui agrège l'information ; 
+
+\item méthode profonde semblent produire ce résultat avec des représentations de plus en plus abstraites.
+\end{itemize}
+\end{frame}
+
+
+
 \section{Revue élémentaire des méthodes de deep learning}
 
 \subsection{Réseau de neurones}
@@ -50,3 +66,75 @@ Le MLP diffère par la manière d'entraîner :
 \end{description}
 \end{frame}
 
+
+
+\subsection{Restricted Boltzmann Machine (RBM)}
+
+\begin{frame}{Machine de Boltzmann}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = \columnwidth]{../fig/boltzmann_machine.png}
+\caption{(gauche) Machine de Boltzmann générale ; (droite) RBM.}
+\label{fig3}
+\end{figure}
+\begin{block}{Énergie}
+\begin{equation}
+E(v,h ; \theta) = -v^TWh - \frac{1}{2}v^TLv - \frac{1}{2}h^T Jh
+\end{equation}
+(pas de terme de biais ici)
+\end{block}
+\end{frame}
+
+\begin{frame}{Restricted Boltzmann Machine}
+\begin{itemize}
+\item La factorisation dans le graphe donne : 
+\begin{equation}
+\begin{array}{rll}
+p(h|v) & = & \displaystyle \prod_{i} p(h_i|x) \\
+p(v|h) & = & \displaystyle \prod_{j} p(x_j|h)
+\end{array}
+\end{equation}
+
+\item Les probabilités conditionnelles valent : 
+\begin{equation}
+\begin{array}{rll}
+p(h_i = 1 |v ) & = & \displaystyle \sigma\left(\sum_j W_{ji}x_j + d_i\right) \\
+p(x_j = 1 |h ) & = & \displaystyle \sigma\left(\sum_i W_{ji}h_i + b_j\right)
+\end{array}
+\end{equation}
+\end{itemize}
+\end{frame}
+
+
+
+
+\subsection{Deep Belief Networks (DBN)}
+
+\begin{frame}{Deep Belief Networks (DBN)}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = .2\columnwidth]{../fig/DBN3.png}
+\caption{Un \emph{deep belief network} (DBN), la dernière couche est non orientée, tandis que toutes les autres le sont.}
+\label{fig4}
+\end{figure}
+\begin{equation}
+p(x, h^1, \cdots, h^l) = \left( \prod_{k=0}^{l-2} p(h^k |h^{k+1}) \right) p(h^{l-1}, h^l)
+\end{equation}
+Entraînement par couches des RBM (\emph{pre-training}) ; échantillonnage pour entrée dans MLP (\emph{fine-tuning}).
+\end{frame}
+
+
+
+
+\subsection{Deep Boltzmann Machine (DBM)}
+
+\begin{frame}{Deep Boltzmann Machine (DBM)}
+\begin{figure}[ht!]
+\centering
+\includegraphics[width = \columnwidth]{../fig/dbm.png}
+\caption{(extrême gauche) Un DBN avec sa dernière couche non orientée ; (gauche) graphe de DBM, toutes les couches sont non orientées ; (droite) \emph{pre-training} des RBM couche par couche ; (extrême droite) composition des couches pour former le DBM.}
+\label{fig5}
+\end{figure}
+
+
+\end{frame}
