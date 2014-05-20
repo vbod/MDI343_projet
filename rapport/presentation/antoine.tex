@@ -2,7 +2,7 @@
 
 \subsection{Implémentation}
 
-\subsubsection*{Données utilisées}
+\subsubsection{Données utilisées}
 
 \begin{frame}{Données utilisées}
 	Travail sur la base de données MNIST
@@ -18,20 +18,21 @@
 	\end{figure}
 \end{frame}
 
-\subsubsection*{Implémentation du RBM}
+\subsubsection{Implémentation du RBM}
 
 \begin{frame}{Implémentation du RBM}
 	\begin{block}{Gradient analytique}
-		\begin{equation}
-			\displaystyle\frac{\partial \log \left ( P(x; \theta) \right )}{\partial \theta} = \displaystyle- \sum_{h} P(h|x) \frac{\partial E(x, h; \theta)}{\theta} + - \sum_{x, h} P(x, h) \frac{\partial E(x, h; \theta)}{\partial\theta} 
-		\end{equation}
+		\begin{eqnarray}
+			\displaystyle \frac{\partial \log \left ( P(x; \theta) \right )}{\partial \theta} =  & - & \displaystyle \sum_{h} P(h|x) \frac{\partial E(x, h; \theta)}{\theta}  \\
+			&+& \displaystyle \sum_{x, h} P(x, h) \frac{\partial E(x, h; \theta)}{\partial\theta} 
+		\end{eqnarray}
 	\end{block}
 	Plusieurs techniques de calcul :
 	\begin{itemize}
 		\item Contrastive divergence (CD)
 		\item Persistent Contrastive Divergence
 	\end{itemize}
-	Utilisation de la bibliothèque scikit-learn qui implément CD
+	Utilisation de la bibliothèque scikit-learn qui implémente PCD
 \end{frame}
 
 \subsubsection*{Implémentation du MLP}
@@ -57,7 +58,7 @@
 	\end{figure} 
 \end{frame}
 
-\subsubsection*{Processus complet}
+\subsubsection{Processus complet}
 
 \begin{frame}{Processus complet}
 	\begin{algorithm}[H]
@@ -84,7 +85,7 @@
 
 \subsection{Résultats}
 
-\subsubsection*{Petite base + RBM}
+\subsubsection{Petite base + RBM}
 
 \begin{frame}{Résultats du RBM}
 	\begin{figure}[ht!]
@@ -107,7 +108,30 @@
 	\end{figure} 
 \end{frame}
 
-\subsubsection*{Petite base + DBN}
+\subsubsection{Petite base + DBN}
+
+\begin{frame}{Résultats du DBN sans MLP}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tabular}{l|c|c|c|c}
+	& precision   & recall  &f1-score &  support \\
+          0&       0.99&      0.98&      0.99&       174\\
+          1 &      0.96 &     0.96 &     0.96 &      184\\
+          2  &     0.97 &     0.99  &    0.98  &     166\\
+          3   &    0.95 &     0.95  &    0.95   &    194\\
+          4    &   0.97 &     0.96   &   0.96   &    186\\
+          5     &  0.94  &    0.96    &  0.95    &   181\\
+          6      & 1.00   &   0.97     & 0.99    &   207\\
+          7       &0.94   &   0.99     & 0.97     &  154\\
+          8       &0.93   &   0.90     & 0.91     &  182\\
+          9       &0.92    &  0.93     & 0.93     &  169\\
+avg / total       &0.96     & 0.96     & 0.96     & 1797\\
+	\end{tabular}
+	\caption{Résultats avec le DBN et la petite base MNIST sans le MLP - méthode de classification régression logistique.}
+	\end{figure} 
+\end{frame}
+
+
 
 \begin{frame}{Résultats du DBN}
 	\begin{figure}[ht!]
@@ -151,5 +175,27 @@ avg / total  &     0.94   &   0.94   &   0.94&      1797\\
 avg / total   &    0.96     & 0.96    &  0.96    & 14000
 	\end{tabular}
 	\caption{Résultats avec le DBN et la grande base MNIST - méthode de classification régression logistique.}
+	\end{figure} 
+\end{frame}
+
+\begin{frame}{Récapitulatif}
+	\begin{figure}[ht!]
+	\centering
+	\begin{tabular}{|l|c|}
+			\hline
+			expérience &  f1-score\\
+			\hline
+			MLP (petite base) & 0.80 \\
+			\hline
+			RBM (petite base) & 0.95 \\
+			\hline
+			DBN (petite base) & 0.96 \\
+			\hline
+			DBN + MLP (petite base) & 0.94 \\
+			\hline
+			DBN + MLP (grande base) & 0.96 \\
+		\hline
+	\end{tabular}
+	\caption{Récapitulatif des différents résultats.}
 	\end{figure} 
 \end{frame}

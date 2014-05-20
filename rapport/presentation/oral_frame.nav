@@ -1,4 +1,4 @@
-\beamer@endinputifotherversion {3.31pt}
+\beamer@endinputifotherversion {3.26pt}
 \headcommand {\slideentry {0}{0}{1}{1/1}{}{0}}
 \headcommand {\beamer@framepages {1}{1}}
 \headcommand {\sectionentry {1}{Introduction}{2}{Introduction}{0}}
@@ -55,11 +55,15 @@
 \headcommand {\beamer@subsubsectionentry {0}{3}{2}{2}{17}{Petite base + DBN}}
 \headcommand {\slideentry {3}{2}{2}{17/17}{R\IeC {\'e}sultats}{0}}
 \headcommand {\beamer@framepages {17}{17}}
-\headcommand {\beamer@subsubsectionentry {0}{3}{2}{3}{18}{Grande base + DBN}}
 \headcommand {\slideentry {3}{2}{3}{18/18}{R\IeC {\'e}sultats}{0}}
 \headcommand {\beamer@framepages {18}{18}}
-\headcommand {\beamer@partpages {1}{18}}
-\headcommand {\beamer@subsectionpages {16}{18}}
-\headcommand {\beamer@sectionpages {11}{18}}
-\headcommand {\beamer@documentpages {18}}
-\headcommand {\def \inserttotalframenumber {18}}
+\headcommand {\beamer@subsubsectionentry {0}{3}{2}{3}{19}{Grande base + DBN}}
+\headcommand {\slideentry {3}{2}{4}{19/19}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@framepages {19}{19}}
+\headcommand {\slideentry {3}{2}{5}{20/20}{R\IeC {\'e}sultats}{0}}
+\headcommand {\beamer@framepages {20}{20}}
+\headcommand {\beamer@partpages {1}{20}}
+\headcommand {\beamer@subsectionpages {16}{20}}
+\headcommand {\beamer@sectionpages {11}{20}}
+\headcommand {\beamer@documentpages {20}}
+\headcommand {\def \inserttotalframenumber {20}}

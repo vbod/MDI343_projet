@@ -39,9 +39,9 @@ rbm_layer_2 = BernoulliRBM(random_state=0, verbose=True)
 logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
 ###############################################################################
 # Training du premier rbm
-rbm_layer_1.learning_rate = 0.06
-rbm_layer_1.n_iter = 20
-rbm_layer_1.n_components = 100
+rbm_layer_1.learning_rate = 0.01
+rbm_layer_1.n_iter = 50
+rbm_layer_1.n_components = 300
 # Training RBM
 print("Debut training RBM1")
 print(X_train.shape)
@@ -60,11 +60,11 @@ while (comp < n_sample_second_layer_training):
 	comp = comp + 1
 
 # Training du second rb
-rbm_layer_2.learning_rate = 0.06
-rbm_layer_2.n_iter = 20
-rbm_layer_2.n_components = 100
+rbm_layer_2.learning_rate = 0.01
+rbm_layer_2.n_iter = 50
+rbm_layer_2.n_components = 300
 # Training RBM
-print("Debut training RBM1")
+print("Debut training RBM2")
 print(H1_train.shape)
 t0 = time.clock()
 rbm_layer_2.fit(H1_train)
@@ -84,7 +84,54 @@ bias2v = bias2v.reshape(bias2v.size, 1)
 W1 = np.vstack((np.hstack((rbm1w, bias1v)), np.hstack((bias1h.T, np.zeros(shape=(1, 1))))))
 W2 = np.vstack((np.hstack((rbm2w, bias2v)), np.hstack((bias2h.T, np.zeros(shape=(1, 1))))))
 weights = [W1, W2]
+layers = [64+1, rbm_layer_1.n_components+1, rbm_layer_2.n_components+1]
+activation = lambda x: np.tanh(x)
 
+print("Calcul nouvelles representations sans MLP")
+print("Train")
+t0 = time.clock()
+X_train_new = np.zeros((X_train.shape[0], sum(layers)))
+for i in range(int(X_train.shape[0])):
+	if (i % 1000 == 0):
+		print(i)
+	a = np.hstack((X_train[i].reshape((1, X_train.shape[1])), np.ones((1, 1))))
+	resTemp = a
+	for j in range(0, len(weights)):
+		resTemp = activation(np.dot(resTemp, weights[j]))
+		a = np.hstack((a, resTemp))
+	X_train_new[i, :] = a
+print(time.clock() - t0)
+print("Test")
+t0 = time.clock()
+X_test_new = np.zeros((X_test.shape[0], sum(layers)))
+for i in range(int(X_test.shape[0])):
+	if (i % 1000 == 0):
+		print(i)
+	a = np.hstack((X_test[i].reshape((1, X_test.shape[1])), np.ones((1, 1))))
+	resTemp = a
+	for j in range(0, len(weights)):
+		resTemp = activation(np.dot(resTemp, weights[j]))
+		a = np.hstack((a, resTemp))
+	X_test_new[i] = a
+print(time.clock() - t0)
+
+print("Calcul regression logistique sans MLP")
+t0 = time.clock()
+logistic = linear_model.LogisticRegression()
+logistic.C = 10
+X_train_new = preprocessing.scale(X_train_new)
+X_test_new = preprocessing.scale(X_test_new)
+
+logistic.fit(X_train_new, Y_train)
+print(time.clock() - t0)
+# print("Score")
+# score = logistic.score(X_test_new, Y_test)
+
+print("Logistic regression using DBN features without MLP :\n%s\n" % (
+    metrics.classification_report(
+        Y_test,
+        logistic.predict(X_test_new))))
+        
 layers = [64+1, rbm_layer_1.n_components+1, rbm_layer_2.n_components+1]
 
 # layers = [64, 100, 100]
@@ -93,7 +140,7 @@ print(X_test.shape)
 print("Training MLP")
 t0 = time.clock()
 mlp = MLP.MLP(layers, weights=weights)
-mlp.fit(X_train, Y_train, epochs=1000)
+mlp.fit(X_train, Y_train, epochs=100000)
 print(time.clock() - t0)
 
 
@@ -125,21 +172,21 @@ for i in range(int(X_test.shape[0])):
 	X_test_new[i] = a
 print(time.clock() - t0)
 
-print("Training SVM")
-t0 = time.clock()
-clf = svm.SVC()
-clf.fit(X_train_new, Y_train)  
-print(time.clock() - t0)
-
-print("SVM using DBN features:\n%s\n" % (
-    metrics.classification_report(
-        Y_test,
-        clf.predict(X_test_new))))
+#print("Training SVM")
+#t0 = time.clock()
+#clf = svm.SVC()
+#clf.fit(X_train_new, Y_train)  
+#print(time.clock() - t0)
+#
+#print("SVM using DBN features:\n%s\n" % (
+#    metrics.classification_report(
+#        Y_test,
+#        clf.predict(X_test_new))))
 
 print("Calcul regression logistique")
 t0 = time.clock()
 logistic = linear_model.LogisticRegression()
-logistic.C = 6000
+logistic.C = 10
 X_train_new = preprocessing.scale(X_train_new)
 X_test_new = preprocessing.scale(X_test_new)
 
