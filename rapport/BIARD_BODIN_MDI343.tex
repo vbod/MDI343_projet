@@ -38,7 +38,7 @@ Apprentissage profond, réseau de neurones, \emph{etc.}}
 \vspace{2cm}
 \renewcommand{\abstractname}{Résumé}
 \begin{abstract}
-Ce projet s'attelle à la question de la représentation des données en \emph{machine learning}. Ces représentations, utilisées ensuite par l'algorithme de décision - régression logistique, SVM... - jouent un rôle primordial car porteuses de l'information. A la méthode classique de création de \emph{features} par des connaissances \emph{a priori}, on oppose des méthodes d'extraction de représentation par des structures dites profondes. Notre projet a consisté essentiellement en deux parties : une première partie de compréhension et d'étude des principales méthodes, et une seconde d'implémentation et de test sur quelques unes de ces méthodes (RBM, MLP, DBN).
+Ce projet s'attelle à la question de la représentation des données en \emph{machine learning}. Ces représentations, qui peuvent être utilisées ensuite par un algorithme de décision - régression logistique, SVM... - jouent un rôle primordial car porteuses de l'information. A la méthode classique de création de \emph{features} par des connaissances \emph{a priori}, on oppose des méthodes d'extraction de représentation par des structures dites profondes. Notre projet a consisté essentiellement en deux parties : une première partie de compréhension et d'étude des principales méthodes, et une seconde d'implémentation et de test sur quelques unes de ces méthodes (RBM, MLP, DBN).
 \end{abstract}
 
 \newpage
@@ -51,7 +51,7 @@ Ces dernières années se sont imposées massivement des méthodes dites d'appre
 
 La représentation est une clef fondamentale dans l'élaboration d'un processus d'intelligence artificielle, en ceci qu'elle concentre l'information des données. On distingue en effet une première étape d'apprentissage de la représentation, puis une seconde d'apprentissage, à partir de cette représentation, d'une décision - pour de la classification par exemple. Les algorithmes effectuant cette dernière tâche sont hautement dépendants des données fournies en entrée. Une amélioration de la représentation entraîne de fait une meilleure performance dans la prise de décision. Nous renvoyons à la deuxième section de \cite{DBLP:journals/corr/abs-1206-5538} pour des quantifications d'amélioration de la performance avec des représentations plus élaborées.
 
-Traditionnellement, les descripteurs - ou encore \emph{features} en anglais - sont extraits de façon dite supervisée à partir des données. Ceci nécessite une connaissance \emph{a priori} dans le domaine, puisque cela requiert souvent une importante étape de traitement des données pour en extraire l'information - citons parmi tant d'autre en vision les points de Harris et les SIFT ou encore le spectrogramme et les \emph{Mel-frequency cepstrum coefficients} en audio. Cela repose sur l'idée que l'homme a la capacité d'extraire et d'organiser l'information intrinsèque des données. Pour autant, dans un cadre d'intelligence artificielle pure, il serait désirable de s'affranchir de cette hypothèse et d'implémenter des algorithmes capables d'apprendre une représentation convenable sans supervision - non-supervisé. En outre, les types de données ayant tendance à devenir de plus en plus variés - image, son, web... - une telle connaissance dans chaque domaine s'avère illusoire et le manque de généralité de ces méthodes se paye dans la nécessité d'expertise dans chaque domaine. Il s'agit d'implémenter des méthodes extrayant des données une représentation abstraite.
+Traditionnellement, les descripteurs - ou encore \emph{features} en anglais - sont extraits de façon dite supervisée à partir des données. Ceci nécessite une connaissance \emph{a priori} dans le domaine, puisque cela requiert souvent une importante étape de traitement des données pour en extraire l'information - citons parmi tant d'autre en vision les points de Harris et les SIFT ou encore le spectrogramme et les \emph{Mel-frequency cepstrum coefficients} en audio. Cela repose sur l'idée que l'homme a la capacité d'extraire et d'organiser l'information intrinsèque des données. Pour autant, dans un cadre d'intelligence artificielle pure, il serait désirable de s'affranchir de cette hypothèse et d'implémenter des algorithmes capables d'apprendre une représentation convenable sans supervision - non-supervisé. En outre, les types de données ayant tendance à devenir de plus en plus variés - image, son, web... - une telle connaissance dans chaque domaine s'avère illusoire et le manque de généralité de ces méthodes se paye dans la nécessité d'expertise dans chaque domaine. Il s'agit donc d'implémenter des méthodes extrayant des données une représentation abstraite.
 
 Une manière d'atteindre ce but est l'extraction d'une représentation par apprentissage profond - \emph{deep learning}. Une telle représentation s'obtient par l'ajout de couches successives. Une première représentation est obtenue par un processus à partir des données pures, puis cette représentation est elle-même raffinée, et ainsi de suite. Dans l'espoir d'obtenir une représentation abstraite, la non-linéarité devient nécessaire puisque sans elle, l'ajout de deux couches linéaires serait équivalent à une unique couche - le concept de profondeur perdrait sens.
 
@@ -67,12 +67,12 @@ Nous allons par la suite détailler les algorithmes d'apprentissage profond les 
 
 \subsection{Réseau de neurones}
 
-Un réseau de neurone peut être vu comme l'utilisation en série et parallèle plusieurs neurones simples, cf. Fig.(\ref{fig1}). Un neurone est un noeud, avec un certain nombre d'entrée, et une fonction d'activation, disons $\sigma$ - souvent tangente hyperbolique ou une sigmoïde, l'idée étant d'avoir une fonction proche de la fonction seuil, qui donne une activation \emph{soft}. Pour un neurone ayant $p$ entrée, chacun pondéré par un poids $w_i$, et un \emph{offset} b, la sortie du neurone est :
+Un réseau de neurone peut être vu comme l'utilisation en série et parallèle plusieurs neurones simples, cf. Fig.(\ref{fig1}). Un neurone est un nœud, avec un certain nombre d'entrées, et une fonction d'activation, disons $\sigma$ - souvent tangente hyperbolique ou une sigmoïde, l'idée étant d'avoir une fonction proche de la fonction seuil, qui donne une activation \emph{soft}. Pour un neurone ayant $p$ entrées, chacune pondérée par un poids $w_i$, et un biais $b$, la sortie du neurone est :
 \begin{equation}
 h_{w,b}(x)=\sigma(w^Tx)=\sigma\left(\sum_{i=1}^p w_i x_i + b\right)
 \end{equation}
 
-Dans le cas d'un réseau de neurones, en utilisant une formule de chaîne où chaque sortie de neurone intermédiaire devient l'entrée du neurone suivant, on obtient un réseau du type de la Fig.(\ref{fig1}). On voit ici apparaître naturellement l'idée de profondeur dans l'apprentissage par accumulation de couche de neurone, bien qu'il s'agisse du modèle le plus basic d'apprentissage profond. La fonction de sortie dépend de tous les paramètres $w,b$ à chaque couche et chaque noeuds. La difficulté majeure dans l'apprentissage profond réside en l'estimation des paramètres optimaux - dans le sens où la sortie est la représentation la plus adéquate.
+Dans le cas d'un réseau de neurones, en utilisant une formule de chaîne où chaque sortie de neurone intermédiaire devient l'entrée du neurone suivant, on obtient un réseau du type de la Fig.(\ref{fig1}). On voit ici apparaître naturellement l'idée de profondeur dans l'apprentissage par accumulation de couches de neurone, bien qu'il s'agisse du modèle le plus basique d'apprentissage profond. La fonction de sortie dépend de tous les paramètres $w,b$ à chaque couche et chaque nœud. La difficulté majeure dans l'apprentissage profond réside en l'estimation des paramètres optimaux - dans le sens où la sortie est la représentation la plus adéquate.
 
 \begin{figure}[ht!]
 \centering
@@ -87,7 +87,7 @@ Dans le cas d'un réseau de neurones, en utilisant une formule de chaîne où ch
 
 \subsection{Multilayer Perceptron (MLP)}
 
-Le second modèle classique en apprentissage profond est le perceptron multi-couche (MLP). Il s'agit du premier exemple d'algorithme utilisant la méthode dite de \emph{backpropagation}. Bien que peu utilisé seul en pratique, car la fonction d'optimisation n'est pas convexe et il y a de grand risque de trouvé un optimum local et non global, le MLP correspond aux prémisses du \emph{deep learning} et sera réutilisé pour des modèles plus complexes par la suite.
+Un modèle classique en apprentissage profond est le perceptron multi-couches (MLP). Il s'agit du premier exemple d'algorithme utilisant la méthode dite de \emph{backpropagation}. Bien que peu utilisé seul en pratique, car la fonction d'optimisation n'est pas convexe et il y a de grands risques de trouver un optimum local et non global, le MLP correspond aux prémices du \emph{deep learning} et sera réutilisé pour des modèles plus complexes par la suite.
 
 \begin{figure}[ht!]
 \centering
@@ -95,17 +95,17 @@ Le second modèle classique en apprentissage profond est le perceptron multi-cou
 \includegraphics[width = .5\columnwidth]{fig/mlp} &
 \includegraphics[width = .5\columnwidth]{fig/backprop_notation.png} 
 \end{tabular}
-\caption{(gauche) Un MLP avec une seule couche de variables cachées ; (droite) structure de MLP avec l'ajout de biais et les notions de poids.}
+\caption{(gauche) Un MLP avec une seule couche de variables cachées ; (droite) structure de MLP avec l'ajout de biais et les poids.}
 \label{fig2}
 \end{figure}
 
-Le MLP possède une fonction d'activation $\sigma$ - tangente hyperbolique ou la fonction logistique souvent - des noeuds de biais $b$ et des poids $W$ associés à chaque arrête. Pour chaque couche, le paramètre est donc $\theta = (W,b)$, et pour une entrée $x$ de dimension $d$ - \emph{i.e.} $d$ noeuds - la sortie de cette couche est : 
+Le MLP possède une fonction d'activation $\sigma$ - tangente hyperbolique ou la fonction logistique souvent - des nœuds de biais $b$ et des poids $W$ associés à chaque arrête. Pour chaque couche, le paramètre est donc $\theta = (W,b)$, et pour une entrée $x$ de dimension $d$ - \emph{i.e.} $d$ nœuds - la sortie de cette couche est : 
 \begin{equation}
 s(x) = \sigma(Wx + b)
 \end{equation}
 Ceci forme un vecteur de taille disons $m$ - sur la Fif.(\ref{fig2}) par exemple pour la première couche $d=3$ et $m=4$ - qui est envoyé comme entrée à la couche suivante. 
 
-La nouveauté du MLP comparé au réseau de neurone réside en la manière d'apprendre l'hyper-paramètre $\theta = (W_1, \cdots, W_p, b_1, \cdots, b_p)$ - $p$ est le nombre de couches. L'algorithme en question sera développé plus tard mais nous en donnons un aperçu. L'initialisation s'effectue classiquement de manière aléatoire - bien que dans le cas du DBN on lui envoie des poids définis en entrée. Dans \cite{GlorotAISTATS2010}, il est expliqué comment tirer les poids initialement. L'algorithme contient ensuite deux étapes :
+La nouveauté du MLP comparé au réseau de neurone réside en la manière d'apprendre l'hyper-paramètre $\theta = (W_1, \cdots, W_p, b_1, \cdots, b_p)$ - $p$ est le nombre de couches. L'algorithme en question sera développé plus tard mais nous en donnons un aperçu. L'initialisation s'effectue classiquement de manière aléatoire - bien que dans le cas du DBN on lui envoie des poids définis en entrée. Dans \cite{GlorotAISTATS2010}, il est expliqué comment tirer les poids initialement, nous y reviendrons. L'algorithme contient ensuite deux étapes :
 \begin{description}
 \item[Forward pass. ]On part des variables visibles $v$ et on remonte le graphe avec les poids de la structure. On en déduit une représentation.
 
@@ -121,7 +121,7 @@ Notons que ceci ne fournit qu'une représentation. Pour effectuer une classifica
 
 \subsubsection{Machine de Boltzmann}
 
-Une machine de Boltzmann est un réseau de variables aléatoires couplées. On se restreint au cas où les données sont binaire, on note les variables visibles $v$ et les cachées $h$. Une machine de Boltzmann est représentée en Fig.(\ref{fig3}) à gauche.
+Une machine de Boltzmann est un réseau de variables aléatoires couplées. On se restreint au cas où les données sont binaires, on note les variables visibles $v$ et les cachées $h$. Une machine de Boltzmann est représentée en Fig.(\ref{fig3}) à gauche.
 
 \begin{figure}[ht!]
 \centering
@@ -144,7 +144,7 @@ où $\mathcal{Z} = \sum_{x,h}e^{-E(v,h;\theta)}$ est la fonction de partition. C
 
 \subsubsection{Restricted Boltzmann Machine}
 
-Comme montré dans la Fig.(\ref{fig3}), un RBM est une machine de Boltzmann où les interactions inter-couches sont gelées. De par la forme de son graphe, le RBM a des propriétés d'indépendances conditionnelles qui rendent l'inférence facile en pratique : 
+Comme montré dans la Fig.(\ref{fig3}), un RBM est une machine de Boltzmann où les interactions inter-couches sont gelées. De par la forme de son graphe, le RBM a des propriétés d'indépendance conditionnelle qui rendent l'inférence facile en pratique : 
 \begin{equation}
 \begin{array}{rll}
 p(h|v) & = & \displaystyle \prod_{i} p(h_i|x) \\
@@ -194,7 +194,7 @@ où KL est la divergence de Kulbac-Leibler, H l'entropie, $Q(h^{(1)}|x)$ la dist
 
 Un DBM est une structure profonde qui,  en première approche tout au moins, ressemble fortement à un DBN. De la même manière que le DBN, le DBM extrait une représentation abstraite des données. Également, un faible nombre de données étiquetées est nécessaire à la tâche de classification, ce qui peut être intéressant dans certains cas. Il est dit dans \cite{SalHinton07} que l'inférence dans les DBM est plus robuste que dans les DBN car les entrées ambiguës ont moins d'impact. 
 
-Un DBM est constitué de RBM empilés comme dans le cas des DBN. L'étape de \emph{pre-training} se résume à un entraînement couche par couche - \emph{greedy} - de ces RBM. L'idée pour autant est de modifier un peu cette étape pour éviter le double passage quand on fait les étapes de haut vers le bas et bas vers le haut. Ainsi, pour le niveau le plus bas - plus bas RBM - les entrées sont doublées avec les poids visibles-cachés inchangés, cf. Fig.(\ref{fig5}). Une étape d'évaluation du DBM basé sur des méthode de Monte Carlo - \emph{Annealed Importance Sampling} - a ensuite lieu. Finalement, on termine comme dans le cas du DBN par du \emph{fine-tuning} avec un MLP par exemple - qui converti la représentation en étiquette.
+Un DBM est constitué de RBM empilés comme dans le cas des DBN. L'étape de \emph{pre-training} se résume à un entraînement couche par couche - \emph{greedy} - de ces RBM. L'idée pour autant est de modifier un peu cette étape pour éviter le double passage quand on fait les étapes de haut vers le bas et bas vers le haut. Ainsi, pour le niveau le plus bas les entrées sont doublées avec les poids visibles-cachés inchangés, cf. Fig.(\ref{fig5}). Une étape d'évaluation du DBM basée sur des méthode de Monte Carlo - \emph{Annealed Importance Sampling} - a ensuite lieu. Finalement, on termine comme dans le cas du DBN par du \emph{fine-tuning} avec un MLP par exemple - qui converti la représentation en étiquette.
 
 \begin{figure}[ht!]
 \centering
@@ -225,31 +225,30 @@ où typiquement $s_f$ et $s_g$ sont des sigmoïdes ou des tangentes hyperbolique
 \section{Implémentation et résultats}
 
 
-Dans cette partie nous allons présenter les différents choix que nous avons pris afin d'implémenter un DBN. Puis nous présenterons l'implémentation complète du graphe, et enfin nous comenterons les résultats obtenus.
+Dans cette partie nous allons présenter les différents choix que nous avons pris afin d'implémenter un DBN. Puis nous présenterons l'implémentation complète du graphe, et enfin nous commenterons les résultats obtenus.
 
 
-\subsection{Les différentes briques}
+\subsection{Données et algorithmes élémentaires}
 
 
-Dans la littérature il existe un grand nombre d'algorithmes afin d'obtimiser un DBN. Nous allons ici présenter rapidement les briques qui composent classiquement les algorithmes d'apprentissage de DBN.
+Dans la littérature il existe un grand nombre d'algorithmes afin d'optimiser un DBN. Nous allons ici présenter rapidement les briques qui composent classiquement les algorithmes d'apprentissage de DBN.
 
 
 \subsubsection{Les données}
 
-
-Afin de tester notre algorithme, nous avons décidé d'utiliser la base de données MNIST. Cette base de données a l'avantage d'être une référence et nous avons ainsi un très bon \textit{a priori} des performances de notre implémentation. Elle permet aussi de réaliser un apprentissage multiclasse. De plus, cette base a été le témoin de la puissance de l'apprentissage profond (réseau de neurones à convolution). La structure des chiffres permet en effet d'envisager une représentation à avec plusieurs niveau d'abstraction. Par exemple, la différence entre un 1 et un 7 ou un 6 et un 4 peut sembler ambiguë, et un classifieur prenant en entrée les vecteurs des pixels risque de ne pas être très pertinent.
-
-
-Le temps de calcul nécessaire à ces algorithmes est très important. Nous avons donc choisi de réaliser la plupart de nos tests sur une base réduite extraite de la base MNIST que nous avons chargé grâce à la fonciont \texttt{sklearn.datasets.load\_digits} de scikit-learn. Cette base contient 1797 images de chiffres de dimension $8 \times 8$. Afin d'augmenter la taille de la base, nous avons utilisé une technique classique qui consiste à réaliser des translations de chaque chiffre afin d'augmenter la base par un facteur $5$.
+Afin de tester notre algorithme, nous avons décidé d'utiliser la base de données MNIST. Cette base de données a l'avantage d'être une référence et nous avons ainsi une très bonne quantification des performances de notre implémentation. Elle permet aussi de réaliser un apprentissage multiclasse. De plus, cette base a été le témoin de la puissance de l'apprentissage profond (réseau de neurones à convolution). La structure des chiffres permet en effet d'envisager une représentation à avec plusieurs niveau d'abstraction. Par exemple, la différence entre un 1 et un 7 ou un 6 et un 4 peut sembler ambiguë, et un classifieur prenant en entrée les vecteurs des pixels risque de ne pas être très pertinent. Pour autant, construire des structures profondes extrait des représentations linéairement séparables de ces chiffres.
 
 
-Nous avons aussi essayé de lancer notre algorithme sur la véritable data base dont les images sont de taille $28 \times 28$ et est constituée de plus de 50000 exemples. Nous présenterons les résultats obtenus sur cette base. 
+Le temps de calcul nécessaire à ces algorithmes est très long. Nous avons donc choisi de réaliser la plupart de nos tests sur une base réduite extraite de la base MNIST que nous avons chargée grâce à la fonction \texttt{sklearn.datasets.load\_digits} de scikit-learn. Cette base contient 1797 images de chiffres de dimension $8 \times 8$. Afin d'augmenter la taille de la base, nous avons utilisé une technique classique qui consiste à réaliser des translations de chaque chiffre afin d'augmenter la base par un facteur $5$.
 
 
-\subsubsection{Le RBM}
+Nous avons aussi essayé de lancer notre algorithme sur la véritable base de données dont les images sont de taille $28 \times 28$ et est constituée de plus de 50000 exemples. Nous présenterons les résultats obtenus sur cette base. 
 
 
-La structure essentielle de notre rapport est le RBM. La principale difficulté de cette structure est le calcul du gradient qui peut se calculer analytiquement. Nous rappelons que le principe des RBMs est de minimiser la log-vraissemblance qui s'exprime de cette manière :
+\subsubsection{Implémentation du RBM}
+
+
+La structure essentielle de notre rapport est le RBM. La principale difficulté de cette structure est le calcul du gradient qui peut se calculer analytiquement. Nous rappelons que le principe des RBM est de minimiser la log-vraisemblance qui s'exprime de cette manière :
 \begin{equation}
 	\log \left( P(x; \theta) \right) = \log \sum_h \mathrm{e}^{-E(x, h; \theta)} - \log \sum_{x, h} \mathrm{e}^{-E(x, h; \theta)}
 \end{equation}
@@ -266,16 +265,16 @@ Cette expression se dérive par rapport à $\theta$ :
 \end{equation}
 
 
-La première partie du gradient est appelée phase positive, la seconde est la phase négative. Afin de calculer la première partie il faut échantillonner selon la loi $P(h|x)$. Comme présentée dans l'article \cite{HIN1984} cette partie est calculé à partir d'un exemple $x$ de la base d'entrainement. La seconde partie en revanche demande d'échantillonner selon la loi jointe de $x$ et $h$. Elle ne peut être calculée que approximativement, et on aimerait qu'elle l'échantillonnage soit réalisé à partir du modèle courant. Il existe principalement deux méthode afin d'échantillonner selon la loi jointe $P(x, h)$.
+La première partie du gradient est appelée phase positive, la seconde est la phase négative. Afin de calculer la première partie il faut échantillonner selon la loi $P(h|x)$. Comme présentée dans l'article \cite{HIN1984}. cette partie est calculée à partir d'un exemple $x$ de la base d'entrainement. La seconde partie en revanche demande d'échantillonner selon la loi jointe de $x$ et $h$. Elle ne peut être calculée que approximativement, et on aimerait que l'échantillonnage soit réalisé à partir du modèle courant. Il existe principalement deux méthodes afin d'échantillonner selon la loi jointe $P(x, h)$. Toutes sont des dérivées des méthodes MCMC trop longues pour être appliquées à chaque étape.
 
 
 \paragraph{Contrastive Divergence. } Cette méthode consiste à échantillonner $x$ et $h$ grâce à un très court échantillonneur de Gibbs initialisé par un exemple $x$ de la base d'entrainement. La pratique a montré que le CD-1 (une seule étape) est souvent meilleure. L'idée serait que les échantillons risquent d'être très biaisés, mais qu'ils sont échantillonnés selon le modèle et qu'ils permettent au gradient d'être stable.
 
 
-\paragraph{Persistent Contrastive Divergence. } Cette méthode est très proche de la \textit{Contrastive Divergence}. En effet, à chaque calcul d'un nouvel échantillon, plutôt que de prendre un exemple de la base de train, l'algorithme récupère l'échantillon $x$ obtenu par échantillonnage de l'étape précédente. Ainsi l'algorithme implémente un échantillonneur de Gibbs à travers les différentes mises à jour du RBM. Cette méthode permet de limiter le biais de l'échantillonneur, mais permet comme pour la \textit{Contrastive Divergence} de conserver une continuité entre les échantillons.
+\paragraph{Persistent Contrastive Divergence. } Cette méthode est très proche de la \textit{Contrastive Divergence}. En effet, à chaque calcul d'un nouvel échantillon, plutôt que de prendre un exemple de la base d'entraînement, l'algorithme récupère l'échantillon $x$ obtenu par échantillonnage de l'étape précédente. Ainsi l'algorithme implémente un échantillonneur de Gibbs à travers les différentes mises à jour du RBM. Cette méthode permet de limiter le biais de l'échantillonneur, mais permet comme pour la \textit{Contrastive Divergence} de conserver une continuité entre les échantillons.
 
 
-Après plusieurs tentatives d'implémentation non efficace en python (lenteur et mémoire), nous avons essayé la librairie de Theano qui n'est cependant pas très rapide uniquement sous CPU. Nous avons ainsi utilisé l'implémentation de scikit-learn \texttt{sklearn.neural\_network.BernoulliRBM} qui implémente une \textit{Persistent Contrastive Divergence}.
+Après plusieurs tentatives d'implémentation peu efficace en python (lenteur et mémoire), nous avons essayé la librairie de Theano qui n'est cependant pas très rapide uniquement sous CPU - et l'option GPU n'est pas entièrement stable sous Windows. Nous avons ainsi utilisé l'implémentation de scikit-learn \texttt{sklearn.neural\_network.BernoulliRBM} qui implémente une \textit{Persistent Contrastive Divergence}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%% MLP %%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -283,7 +282,7 @@ Après plusieurs tentatives d'implémentation non efficace en python (lenteur et
 
 \subsubsection{Implémentation du MLP}
 
-Nous avons implémenter l'algorithme le plus classique dans le cas de l'entraînement du MLP : la \emph{backpropagation}. Cet algorithme se décompose en deux étape, une première de propagation, et une seconde de mise à jour des poids. 
+Nous avons implémenté l'algorithme le plus classique dans le cas de l'entraînement du MLP : la \emph{backpropagation}. Cet algorithme se décompose en deux étapes, une première de propagation, et une seconde de mise à jour des poids. 
 
 \paragraph{Initialisation. }L'initialisation est cruciale dans ces algorithmes de \emph{backpropagation}. De plus, comme nous allons utiliser le MLP dans le cas de poids initialisés par empilement de RBM - pour le DBN - notre implémentation doit prendre en compte deux possibilités. Soit on lui envoie les poids, soit on utilise le MLP à part entière et dans ce cas là les poids doivent être initialisés. Dans \cite{GlorotAISTATS2010}, il est expliqué que les poids doivent vérifiés (si $n_1$ et $ n_2$ indiquent le nombre d'éléments au couches d'entrées et de sorties respectivement) : 
 \begin{equation}
@@ -294,9 +293,9 @@ Nous avons implémenter l'algorithme le plus classique dans le cas de l'entraîn
 \end{equation}
 
 
-\paragraph{Propagation. }La propagation correspond à une étape de montée du graphe pour générer les sorties correspondantes puis à une étape de descente qui génère des $\delta$. Ceci nécessite une étiquette $y$ que l'on compare avec la variable cachée finale $h$ - éventuellement ceci peut être vectoriel. Nous verrons dans Alg.(\ref{algoVince}) l'algorithme précisément. 
+\paragraph{Propagation. }La propagation correspond à une étape de montée du graphe pour générer les sorties correspondantes puis à une étape de descente qui génère des $\delta$ accumulant les erreurs commises. Ceci nécessite une étiquette $y$ que l'on compare avec la variable cachée finale $h$ - éventuellement ceci peut être vectoriel. Nous verrons dans Alg.(\ref{algoVince}) l'algorithme précisément. 
 
-\paragraph{Mise à jour des poids. }Pour chaque synapse on met à jour les poids avec les $\delta$ calculé par propagation. Ceci nécessite un paramètre, le \emph{learning rate} qui influence fortement la qualité et la vitesse de l'apprentissage. \\
+\paragraph{Mise à jour des poids. }Pour chaque synapse on met à jour les poids avec les $\delta$ calculés par propagation. Ceci nécessite un paramètre, le \emph{learning rate} qui influence fortement la qualité et la vitesse de l'apprentissage. \\
 
 
 \begin{algorithm}[ht!]
@@ -330,17 +329,38 @@ Nous avons implémenter l'algorithme le plus classique dans le cas de l'entraîn
 \end{algorithmic}
 \end{algorithm}
 
-La prédiction dans le cas d'un MLP consiste uniquement à, une fois les poids établis, utiliser les données et monter le graphe pour retrouver leur représentation. En ce sens, on considère un MLP comme un pur outils de représentation - vision non-paramétrique. On peut toutefois lui rajouter une régression logistique à l'issue - lorsque l'on dispose de données supervisées - qui permet d'en faire un outils de classification supervisée. Nous avons testé le MLP sur des exemples simples - base de données créée par nous-même et étiquette associé. Les résultats étaient toujours très concluant et rapide. 
+La prédiction dans le cas d'un MLP consiste uniquement à, une fois les poids établis, utiliser les données et monter le graphe pour retrouver leur représentation. En ce sens, on considère un MLP comme un pur outils de représentation - vision non-paramétrique. On peut toutefois lui rajouter une régression logistique à l'issue - lorsque l'on dispose de données supervisées - qui permet d'en faire un outils de classification supervisée. Nous avons testé le MLP sur des exemples simples - bases de données naïves créées par nous-même et étiquette associé. Les résultats étaient toujours très concluants et rapide.
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+On peut lancer le MLP seul comme processus de représentation sur la base de données MNIST - la petite base de données. Les résultats sont fournis en Fig.(\ref{fig100}). On voit que les taux de classifications ne sont pas absurdes mais restent relativement faibles, nous verrons que le \emph{pre-training} par RBM change ceci - dans le bon sens.
+
+\begin{figure}[ht!]
+\centering
+\begin{tabular}{l|c|c|c|c}
+           &  precision  &  recall & f1-score  & support \\
+          0 &      0.90 &     0.96 &     0.93&       174 \\
+          1  &     0.67  &    0.58  &    0.62 &      184\\
+          2   &    0.86   &   0.87   &   0.86  &     166\\
+          3    &   0.75    &  0.74    &  0.75   &    194\\
+          4     &  0.86     & 0.85     & 0.86    &   186\\
+          5      & 0.75      &0.80      &0.77     &  181\\
+          6 &      0.90&      0.94&      0.92      & 207\\
+          7  &     0.84 &     0.90  &    0.87&       154\\
+          8   &    0.80  &    0.65   &   0.72 &      182\\
+          9    &   0.69   &   0.78    &  0.73  &     169\\
+avg / total     &  0.80    &  0.80     & 0.80   &   1797
+\end{tabular}
+\caption{Résultats avec le MLP seul et la petite base MNIST - méthode de classification SVM}
+\end{figure} 
+
+
 
 
 
 \subsection{Le processus complet}
 
 
-Le processus est décrit par le pseudo code \ref{ProcessComplet}. Il consiste dans un premier temps à l'entrainement des différents RBMs. Le premier est entraîné à partir de la base d'entrainement. Pour les RBMs suivants, on échantillonne des variables cachées à partir de l'état du précédent RBM. Dans notre processus, nous avons utilisé pour chaque échantillon de la nouvelle base d'entrainement une chaine de gibbs de longueur 1. Ce procédé est discutable, mais il semble cohérent avec les méthodes couramment utilisés. Une fois l'intégralité des RBMs entrainés, nous initialisons le MLP grâce aux poids des RBMs. Puis nous l'entrainons. Après cette étape de \textit{fine-tuning}, nous entraînons la régression logistique. Des tests de classifications sont alors réalisés, ils sont décrits dans la section suivante.
+Le processus est décrit par le pseudo code \ref{ProcessComplet}. Il consiste dans un premier temps en l'entrainement des différents RBM. Le premier est entrainé à partir de la base d'entrainement. Pour les RBM suivants, on échantillonne des variables cachées à partir de l'état du précédent RBM. Dans notre processus, nous avons utilisé pour chaque échantillon de la nouvelle base d'entrainement une chaine de Gibbs de longueur 1. Ce procédé est discutable, mais il semble cohérent avec les méthodes couramment utilisées. Une fois l'intégralité des RBM entrainés, nous initialisons le MLP grâce aux poids des RBM puis nous l'entrainons. Après cette étape de \textit{fine-tuning}, nous entraînons la régression logistique. Des tests de classifications sont alors réalisés, ils sont décrits dans la section suivante.
 
 
 \begin{algorithm}[ht!]
@@ -374,7 +394,7 @@ Nous présentons ici les résultats obtenus sur différentes bases de données.
 \subsubsection{Comparaison RBM et DBN}
 
 
-Par \textit{GridSearch}, les paramètres pour l'apprentissage d'un RBM seul nous donne un \emph{learning rate} égal à 0.04, et un nombre d'itération égal à 20. Nous utilisons 100 variables cachées. Les résultats de ce RBM seul donne les résultats présentés dans le tableau \ref{RBMDigits}.
+Par \textit{GridSearch}, les paramètres pour l'apprentissage d'un RBM seul nous donne un \emph{learning rate} égal à 0.04, et un nombre d'itérations égal à 20. Nous utilisons 100 variables cachées. Les résultats de ce RBM seul donnent les résultats présentés dans le tableau \ref{RBMDigits}.
 \begin{figure}[ht!]\centering
 	\begin{tabular}{l|c|c|c|c}
 						 &  precision  &  recall & f1-score  & support \\
@@ -391,7 +411,7 @@ Par \textit{GridSearch}, les paramètres pour l'apprentissage d'un RBM seul nous
 	avg / total  &     0.95    &  0.95    &  0.95    &  1797 \\
 	\end{tabular}
 	\label{RBMDigits}
-	\caption{Résulats obtenus après apprentissage d'un RBM puis d'une regression logisitque sur la petite base de données des digits.}
+	\caption{Résulats obtenus après apprentissage d'un RBM puis d'une régression logistique sur la petite base de données des digits.}
 \end{figure}
 
 
@@ -415,15 +435,16 @@ On peut comparer les résultats obtenus avec ceux que l'on obtient avec notre ap
 avg / total  &     0.94   &   0.94   &   0.94&      1797\\
 	\end{tabular}
 	\label{DBNDigits}
-	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une regression logisitque sur la petite base de données des digits.}
+	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une régression logistique sur la petite base de données des digits.}
 \end{figure}
 
-Le fait que nos résultats de DBN ne soit pas aussi bons que ceux du RBM peut venir de deux raisons. D'une part, l'optimisation du RBM est complète - avec l'outil de \texttt{scikit}. D'autre part, notre échantillonnage pour la base d'entraînement du deuxième RBM est probablement trop biaisé - on utilise une CD-1 alors que l'on pourrait faire une chaîne de Gibbs plus longue. 
+Le fait que nos résultats de DBN ne soit pas aussi bons que ceux du RBM peut venir de deux facteurs. D'une part, l'optimisation du RBM est complète - avec l'outil de \texttt{scikit} - tandis que celle du DBN demande beaucoup plus d'attention car le nombre de paramètre est beaucoup plus grand et tous nécessite d'être optimiser conjointement ce qui rend - du moins sur nos machines - la possibilité de \emph{grid search} limitée. D'autre part, notre échantillonnage pour la base d'entraînement du deuxième RBM est probablement trop biaisé - on utilise une CD-1 alors que l'on pourrait faire une chaîne de Gibbs plus longue. 
+
 
 \subsubsection{Apprentissage sur la vraie base}
 
 
-L'apprentissage sur la vraie base est très long. Ainsi nous n'avons pas pu optimiser les paramètres nous même. Nous avons utilisés l'ordre de grandeur des paramètres obtenus par \textit{GridSearch} sur www.deeplearning.net. Pour les RBMs on prend un \emph{learning rate} égal à 0.01, et nous les initialisons avec 1000 variables cachées chacune. L'apprentissage a duré environ 6h, et nous obtenons les résultats de la figure \ref{DBNBigMnist}.
+L'apprentissage sur la vraie base de données est très long. Ainsi nous n'avons pas pu optimiser les paramètres nous-mêmes. Nous avons utilisé l'ordre de grandeur des paramètres obtenus par \textit{GridSearch} sur www.deeplearning.net. Pour les RBMs on prend un \emph{learning rate} égal à 0.01, et nous les initialisons avec 1000 variables cachées chacune. L'apprentissage a duré environ 6h, et nous obtenons les résultats de la figure \ref{DBNBigMnist}.
 
 
 \begin{figure}[ht!]\centering
@@ -442,24 +463,21 @@ L'apprentissage sur la vraie base est très long. Ainsi nous n'avons pas pu opti
 avg / total   &    0.96     & 0.96    &  0.96    & 14000
 	\end{tabular}
 	\label{DBNBigMnist}
-	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une regression logisitque sur la grande base de données des digits.}
+	\caption{Résulats obtenus après apprentissage d'un DBN à deux couches puis d'une régression logistique sur la grande base de données des digits.}
 \end{figure}
 
+On voit que ces résultats sont concluants. Obtenir un taux de 0.96 avec une méthode linéaire telle que la régression logistique montre une propriété fondamentale de notre représentation apprise : elle a tendance à rendre linéairement séparables les groupes de \emph{digits} dans l'espace des représentation. Notons tout de même que nous sommes loin de l'état de l'art (atteint avec des \emph{convolutionnal network}), mais peut-être que l'optimisation des paramètres - nécessitant des machines plus puissantes que les nôtres - aurait pu faire augmenter significativement nos résultats. 
 
 
 
 
 
 
-
-
-
-
-\section*{Conclusion}
+\section{Conclusion}
 
 Dans un environnement où l'intelligence artificielle doit faire face à des données de plus en plus hétéroclites et où l'homme n'a pas de connaissance \emph{a priori}, la représentation abstraite semble prometteuse. Nous avons vu ici une méthode parmi tant d'autre, celle de l'apprentissage profond. Certaines représentations - comme les \emph{convolution network} qui nécessitent une structure de signal - sont des alternatives à ce que nous avons étudié. 
 
-En première partie, nous avons étudié les méthodes principales de \emph{deep learning}, et avons essayé de donner une idée intuitive de comment cela fonctionnait. Nous nous sommes ensuite intéressé un peu plus en profondeur à certains algorithmes, nous avons en particulier étudié les RBM, MLP et DBN. Les résultats fournis nous montrent que ces représentations ne sont pas absconses, mais pour autant elles nécessite une grosse phase d'apprentissage et de réglage des paramètres. Ceci peut être rédhibitoire dans certains cas et surtout ne supporte pas les calculs \emph{on-line}.
+En première partie, nous avons étudié les méthodes principales de \emph{deep learning}, et avons essayé de donner une idée intuitive de comment cela fonctionnait. Nous nous sommes ensuite intéressé un peu plus en profondeur à certains algorithmes, nous avons en particulier étudié les RBM, MLP et DBN. Les résultats fournis nous montrent que ces représentations ne sont pas absconses, en particulier qu'elles ont tendance à rendre les représentations linéairement séparables ce qui trivialise les algorithmes de classification. Pour autant elles nécessitent une grosse phase d'apprentissage et de réglage des paramètres. Ceci peut être rédhibitoire dans certains cas et surtout ne supporte pas les calculs \emph{on-line}.
 
 
 

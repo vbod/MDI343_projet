@@ -28,7 +28,9 @@ from sklearn.utils import check_random_state
 """
 Script principal à lancer directement. Tourne automatiquement en calculant pour
 les DBN la classification des digits sur une base de données réduite. Fait appel
-aux fonctions dans MLP.py et utils.py.
+aux fonctions dans MLP.py et utils.py. D'autres codes peuvent être envoyés en 
+complément - grid search, test plus poussés sur les RBMs et MLP, test 
+d'échantillonnage...
 
 Antoine BIARD
 Vincent BODIN 
@@ -57,14 +59,16 @@ logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regre
 #==============================================================================
 #-------------------- Training du premier rbm --------------------
 
-# grid_search pour determiner parametres optimaux du premier RBM.
+# grid_search pour determiner parametres optimaux du premier RBM. Mettre 
+# grid_search_test = True pour le lancer
 grid_search_test = False
 if grid_search_test:
-    # Models we will use
     logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
     rbm = BernoulliRBM(random_state=0, verbose=True)
     classifier = Pipeline(steps=[('rbm_layer_1', rbm), ('logistic', logistic)])
 
+    # démonstration ici avec une grid search seulement sur le learning rate, en
+    # principe, mettre tous les paramètres conjointement.
     parameters = {'rbm_layer_1__learning_rate': np.linspace(0.04, 0.05, num=10)}
     gridSearch = grid_search.GridSearchCV(classifier, parameters)
     # Training RBM-Logistic Pipeline
@@ -107,9 +111,7 @@ while (comp < n_sample_second_layer_training):
 #-------------------- Training du second rbm --------------------
 
 # grid_search pour determiner parametres optimaux du deuxieme RBM.
-grid_search_test = False
 if grid_search_test:
-    # Models we will use
     logistic = linear_model.LogisticRegression() # pour comparaison avec RBM + regression logistique
     rbm = BernoulliRBM(random_state=0, verbose=True)
     classifier = Pipeline(steps=[('rbm_layer_2', rbm), ('logistic', logistic)])
